@@ -9,6 +9,7 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.util.Date;
+import java.util.List;
 
 @Data
 @AllArgsConstructor
@@ -32,4 +33,12 @@ public class Pedido {
     @ManyToOne
     @JoinColumn(name = "cliente_tb_cpf")
     private Cliente cliente;
+
+    @ManyToMany
+    @JoinTable(
+            name = "pedido_produto",
+            joinColumns = @JoinColumn(name = "numero_pedido"),
+            inverseJoinColumns = @JoinColumn(name = "numero_produto")
+    )
+    private List<Produto> produtos;
 }

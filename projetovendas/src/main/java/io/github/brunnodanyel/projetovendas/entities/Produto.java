@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
+import java.util.List;
 
 @Data
 @AllArgsConstructor
@@ -40,4 +41,7 @@ public class Produto {
 
     @Column(name = "tb_disponibilidade")
     private DisponibilidadeEnum disponibilidade;
+
+    @ManyToMany(mappedBy = "produtos")
+    private List<Pedido> pedidos;
 }
