@@ -1,0 +1,44 @@
+package io.github.brunnodanyel.projetovendas.entities;
+
+import com.fasterxml.jackson.annotation.JsonFormat;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+import javax.persistence.*;
+import java.util.Date;
+import java.util.List;
+
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
+@Entity
+public class Cliente {
+
+
+    @Id
+    @Column(name = "tb_cpf")
+    private String cpf;
+
+    @Column(name = "tb_nome_completo")
+    private String nomeCompleto;
+
+    @Column(name = "tb_data_nascimento")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd/MM/yyyy", locale = "pt-BR", timezone = "Brazil/East")
+    private Date dataNascimento;
+
+    @Column(name = "tb_telefone_celular")
+    private Integer telefoneCelular;
+
+    @Column(name = "tb_email")
+    private String email;
+
+    @Column(name = "tb_enderecos")
+    @OneToMany(mappedBy = "cliente", cascade = CascadeType.ALL)
+    private List<Endereco> enderecos;
+
+    @Column(name = "tb_pedidos")
+    @OneToMany(mappedBy = "cliente", cascade = CascadeType.ALL)
+    private List<Pedido> pedidos;
+
+}
