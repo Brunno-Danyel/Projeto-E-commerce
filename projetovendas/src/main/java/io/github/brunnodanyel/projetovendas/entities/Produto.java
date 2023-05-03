@@ -18,8 +18,10 @@ public class Produto {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
     @Column(name = "tb_numero_produto")
-    private Long numeroDoProduto;
+    private Integer CodigoDoProduto;
 
     @Column(name = "tb_nome_produto")
     private String nome;
