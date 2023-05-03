@@ -12,7 +12,11 @@ import javax.persistence.*;
 @Entity
 public class Endereco {
 
+
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
     @Column(name = "tb_cep")
     private String cep;
 
@@ -40,7 +44,7 @@ public class Endereco {
     @Column(name = "tb_uf")
     private String uf;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "cliente_tb_cpf")
+    @ManyToOne
+    @JoinColumn(name = "id_cliente")
     private Cliente cliente;
 }
