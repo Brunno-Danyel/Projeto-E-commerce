@@ -7,8 +7,5 @@ import java.util.List;
 
 public interface EnderecoService {
 
-
-//    void cadastrarEndereco(EnderecoRequestDTO enderecoRequestDTO, String cpf);
-
     List<EnderecoResponseDTO> buscarEnderecoCliente(String cpf);
 }

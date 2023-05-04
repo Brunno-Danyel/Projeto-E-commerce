@@ -18,6 +18,9 @@ import java.util.List;
 public class Pedido {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
     @Column(name = "tb_numero_pedido")
     private String numeroPedido;
 
