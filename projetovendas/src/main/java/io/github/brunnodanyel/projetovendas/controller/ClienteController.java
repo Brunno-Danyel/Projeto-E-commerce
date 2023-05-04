@@ -1,0 +1,73 @@
+package io.github.brunnodanyel.projetovendas.controller;
+
+import io.github.brunnodanyel.projetovendas.entities.Cliente;
+import io.github.brunnodanyel.projetovendas.model.dtoRequest.ClienteRequestDTO;
+import io.github.brunnodanyel.projetovendas.model.dtoRequest.ClienteUpdateRequestDTO;
+import io.github.brunnodanyel.projetovendas.model.dtoRequest.CredenciaisRequestDTO;
+import io.github.brunnodanyel.projetovendas.model.dtoRequest.EnderecoRequestDTO;
+import io.github.brunnodanyel.projetovendas.model.dtoResponse.ClienteResponseDTO;
+import io.github.brunnodanyel.projetovendas.model.dtoResponse.TokenResponseDTO;
+import io.github.brunnodanyel.projetovendas.security.JwtService;
+import io.github.brunnodanyel.projetovendas.services.ClienteService;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
+
+@RequiredArgsConstructor
+@RestController
+@RequestMapping("api/clientes")
+public class ClienteController {
+
+    private final PasswordEncoder encoder;
+
+    private final ClienteService clienteService;
+
+    private final JwtService jwtService;
+
+    @PostMapping("/cadastrar")
+    public void cadastrarCliente(@RequestBody ClienteRequestDTO clienteRequestDTO){
+        String senhaCriptografada = encoder.encode(clienteRequestDTO.getSenha());
+        clienteRequestDTO.setSenha(senhaCriptografada);
+        clienteService.cadastrarCliente(clienteRequestDTO);
+    }
+
+    @PostMapping("/adicionarEndereco/{id}")
+    public void addEnderecoCliente(@PathVariable Long id, @RequestBody EnderecoRequestDTO enderecoRequestDTO){
+        clienteService.addEnderecoCliente(id, enderecoRequestDTO);
+    }
+
+    @PutMapping("atualizar/cliente")
+    public ClienteResponseDTO atualizarCliente(@RequestParam String cpf, @RequestBody ClienteUpdateRequestDTO requestDTO){
+        ClienteResponseDTO clienteResponseDTO = clienteService.atualizarCliente(cpf, requestDTO);
+        return clienteResponseDTO;
+    }
+
+    @GetMapping("buscar/id/{id}")
+    public ClienteResponseDTO buscarId(@PathVariable Long id){
+        ClienteResponseDTO clienteResponseDTO = clienteService.buscarId(id);
+        return clienteResponseDTO;
+    }
+
+    @GetMapping("buscar/cpf/")
+    public ClienteResponseDTO buscarCpf(@RequestParam String cpf){
+        ClienteResponseDTO clienteResponseDTO = clienteService.buscarCpf(cpf);
+        return clienteResponseDTO;
+    }
+
+    @PostMapping("/auth")
+    public TokenResponseDTO autenticar(@RequestBody CredenciaisRequestDTO dto) {
+        try {
+            Cliente cliente = Cliente.builder().email(dto.getEmail()).senha(dto.getSenha()).build();
+            UserDetails usuarioAutenticado = clienteService.autenticar(cliente);
+            String token = jwtService.gerarToken(cliente);
+            return new TokenResponseDTO(cliente.getEmail(), token);
+
+        } catch (RuntimeException e) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, e.getMessage());
+        }
+    }
+
+}
