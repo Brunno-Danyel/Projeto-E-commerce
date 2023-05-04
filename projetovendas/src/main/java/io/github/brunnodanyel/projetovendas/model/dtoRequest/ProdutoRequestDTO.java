@@ -14,7 +14,7 @@ import java.math.BigDecimal;
 @NoArgsConstructor
 public class ProdutoRequestDTO {
 
-    private Integer CodigoDoProduto;
+    private String codigoDoProduto;
 
     private String nome;
 

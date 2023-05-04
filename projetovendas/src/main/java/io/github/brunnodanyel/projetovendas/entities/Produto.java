@@ -20,8 +20,8 @@ public class Produto {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "tb_numero_produto")
-    private Integer CodigoDoProduto;
+    @Column(name = "tb_codigo_produto")
+    private String codigoDoProduto;
 
     @Column(name = "tb_nome_produto")
     private String nome;
@@ -33,6 +33,7 @@ public class Produto {
     private String descricao;
 
     @Column(name = "tb_categoria")
+    @Enumerated(EnumType.STRING)
     private CategoriaEnum categoria;
 
     @Column(name = "tb_preco")
@@ -42,6 +43,7 @@ public class Produto {
     private Integer quantidade;
 
     @Column(name = "tb_disponibilidade")
+    @Enumerated(EnumType.STRING)
     private DisponibilidadeEnum disponibilidade;
 
     @ManyToMany(mappedBy = "produtos")
