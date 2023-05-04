@@ -9,10 +9,17 @@ import io.github.brunnodanyel.projetovendas.repositories.ProdutoRepository;
 import io.github.brunnodanyel.projetovendas.services.ProdutoService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
+import java.util.List;
+import java.util.stream.Collectors;
+
+@Service
 public class ProdutoServiceImpl implements ProdutoService {
 
     public static final int QUANTIDADE_MINIMA_PARA_DISPONIBILIDADE = 1;
+
     @Autowired
     private ProdutoRepository produtoRepository;
 
@@ -30,10 +37,54 @@ public class ProdutoServiceImpl implements ProdutoService {
     }
 
     @Override
-    public ProdutoResponseDTO addProduto(Integer cod, ProdutoAddRequestDTO produtoAddRequestDTO) {
-        Produto produto = produtoRepository.findByCodigoDoProduto(cod).orElseThrow(() -> new RuntimeException("Erro!"));
-        produto.setQuantidade(produtoAddRequestDTO.getQuantidade());
-        return retornaProduto(produto);
+    public ProdutoResponseDTO buscarCodigoDoProduto(String cod) {
+        return produtoRepository.findByCodigoDoProduto(cod).map(this::retornaProduto)
+                .orElseThrow(() -> new RuntimeException(""));
+    }
+
+    @Override
+    public List<ProdutoResponseDTO> buscarMarcaProduto(String marca) {
+        return produtoRepository.findByMarca(marca).stream()
+                .map(this::retornaProduto).collect(Collectors.toList());
+    }
+
+    @Override
+    public List<ProdutoResponseDTO> buscarNomeProduto(String nome) {
+        return produtoRepository.findByNome(nome).stream()
+                .map(this::retornaProduto).collect(Collectors.toList());
+    }
+
+    @Override
+    public List<ProdutoResponseDTO> buscarDescricaoProduto(String descricao) {
+        return produtoRepository.findByDescricao(descricao).stream()
+                .map(this::retornaProduto).collect(Collectors.toList());
+    }
+
+    @Override
+    public List<ProdutoResponseDTO> buscarCategoriaProduto(String categoria) {
+        return produtoRepository.findByCategoria(categoria).stream()
+                .map(this::retornaProduto).collect(Collectors.toList());
+    }
+
+    @Override
+    public List<ProdutoResponseDTO> buscarPrecoProduto(BigDecimal precoInicial, BigDecimal precoFinal) {
+        return produtoRepository.findByPrecoBetween(precoInicial, precoFinal).stream()
+                .map(this::retornaProduto).collect(Collectors.toList());
+    }
+
+    @Override
+    public List<ProdutoResponseDTO> listarTodos() {
+        return produtoRepository.findAll().stream()
+                .map(this::retornaProduto).collect(Collectors.toList());
+    }
+
+    @Override
+    public ProdutoResponseDTO addProduto(String cod, ProdutoAddRequestDTO produtoAddRequestDTO) {
+        return produtoRepository.findByCodigoDoProduto(cod).map(produto -> {
+            produto.setQuantidade(produto.getQuantidade() + produtoAddRequestDTO.getQuantidade());
+            produtoRepository.save(produto);
+           return retornaProduto(produto);
+        }).orElseThrow(() -> new RuntimeException(""));
     }
 
     private ProdutoResponseDTO retornaProduto(Produto produto){
@@ -44,7 +95,8 @@ public class ProdutoServiceImpl implements ProdutoService {
 
     private static Produto converterProdutoRequest(ProdutoRequestDTO produtoRequestDTO){
         Produto produto = new Produto();
-        produto.setCodigoDoProduto(produto.getCodigoDoProduto());
+        produto.setCodigoDoProduto(produtoRequestDTO.getCodigoDoProduto());
+        produto.setDescricao(produtoRequestDTO.getDescricao());
         produto.setNome(produtoRequestDTO.getNome());
         produto.setMarca(produtoRequestDTO.getMarca());
         produto.setPreco(produtoRequestDTO.getPreco());
