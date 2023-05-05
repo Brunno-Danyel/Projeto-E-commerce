@@ -10,7 +10,7 @@ public class EnderecoRequestDTO {
 
     private String cep;
 
-    private String identificação;
+    private String identificacao;
 
     private String logradouro;
 

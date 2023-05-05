@@ -13,7 +13,7 @@ import java.math.BigDecimal;
 @NoArgsConstructor
 public class ProdutoResponseDTO {
 
-    private Integer CodigoDoProduto;
+    private Integer codigoDoProduto;
 
     private String nome;
 
@@ -25,4 +25,5 @@ public class ProdutoResponseDTO {
     private CategoriaEnum categoria;
 
     private BigDecimal preco;
+
 }

@@ -17,9 +17,17 @@ public class EnderecoController {
     private EnderecoService enderecoService;
 
     @GetMapping("buscarEndereco/cliente/")
-    public List<EnderecoResponseDTO> buscarEnderecoCliente(@RequestParam String cpf){
+    public List<EnderecoResponseDTO> buscarEnderecoCliente(@RequestParam String cpf) {
         List<EnderecoResponseDTO> enderecoResponseDTOS = enderecoService.buscarEnderecoCliente(cpf);
         return enderecoResponseDTOS;
+    }
+
+    @PutMapping("atualizar/{id}")
+    public EnderecoResponseDTO atualizarEnderecoCliente(@RequestParam String cpf,
+                                                        @PathVariable Long id,
+                                                        @RequestBody EnderecoRequestDTO enderecoRequestDTO) {
+        EnderecoResponseDTO endereco = enderecoService.atualizaEnderecoCliente(cpf, id, enderecoRequestDTO);
+        return endereco;
     }
 
 }
