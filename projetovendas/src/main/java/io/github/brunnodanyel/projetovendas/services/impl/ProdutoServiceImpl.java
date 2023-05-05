@@ -81,21 +81,41 @@ public class ProdutoServiceImpl implements ProdutoService {
     }
 
     @Override
+    public ProdutoResponseDTO atualizarProduto(String cod, ProdutoUpdateRequestDTO produtoUpdateRequestDTO) {
+        return produtoRepository.findByCodigoDoProduto(cod).map(produto -> {
+
+            String nome = produtoUpdateRequestDTO.getNome().isEmpty() ? produto.getNome() : produtoUpdateRequestDTO.getNome();
+            String marca = produtoUpdateRequestDTO.getMarca().isEmpty() ? produto.getMarca() : produtoUpdateRequestDTO.getMarca();
+            String descricao = produtoUpdateRequestDTO.getDescricao().isEmpty() ? produto.getDescricao() : produtoUpdateRequestDTO.getDescricao();
+            CategoriaEnum categoria = produtoUpdateRequestDTO.getCategoria() == null ? produto.getCategoria() : produtoUpdateRequestDTO.getCategoria();
+            BigDecimal preco = produtoUpdateRequestDTO.getPreco() == null ? produto.getPreco() : produtoUpdateRequestDTO.getPreco();
+
+            produto.setNome(nome);
+            produto.setMarca(marca);
+            produto.setDescricao(descricao);
+            produto.setCategoria(categoria);
+            produto.setPreco(preco);
+            produtoRepository.save(produto);
+            return retornaProduto(produto);
+        }).orElseThrow(() -> new RuntimeException(""));
+    }
+
+    @Override
     public ProdutoResponseDTO addProduto(String cod, ProdutoAddRequestDTO produtoAddRequestDTO) {
         return produtoRepository.findByCodigoDoProduto(cod).map(produto -> {
             produto.setQuantidade(produto.getQuantidade() + produtoAddRequestDTO.getQuantidade());
             produtoRepository.save(produto);
-           return retornaProduto(produto);
+            return retornaProduto(produto);
         }).orElseThrow(() -> new RuntimeException(""));
     }
 
-    private ProdutoResponseDTO retornaProduto(Produto produto){
+    private ProdutoResponseDTO retornaProduto(Produto produto) {
         ProdutoResponseDTO produtoResponseDTO = modelMapper.map(produto, ProdutoResponseDTO.class);
         return produtoResponseDTO;
     }
 
 
-    private static Produto converterProdutoRequest(ProdutoRequestDTO produtoRequestDTO){
+    private static Produto converterProdutoRequest(ProdutoRequestDTO produtoRequestDTO) {
         Produto produto = new Produto();
         produto.setCodigoDoProduto(produtoRequestDTO.getCodigoDoProduto());
         produto.setDescricao(produtoRequestDTO.getDescricao());
