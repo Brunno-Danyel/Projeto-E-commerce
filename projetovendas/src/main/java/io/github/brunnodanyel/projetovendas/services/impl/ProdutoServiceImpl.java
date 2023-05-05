@@ -1,9 +1,11 @@
 package io.github.brunnodanyel.projetovendas.services.impl;
 
 import io.github.brunnodanyel.projetovendas.entities.Produto;
+import io.github.brunnodanyel.projetovendas.enumeration.CategoriaEnum;
 import io.github.brunnodanyel.projetovendas.enumeration.DisponibilidadeEnum;
 import io.github.brunnodanyel.projetovendas.model.dtoRequest.ProdutoAddRequestDTO;
 import io.github.brunnodanyel.projetovendas.model.dtoRequest.ProdutoRequestDTO;
+import io.github.brunnodanyel.projetovendas.model.dtoRequest.ProdutoUpdateRequestDTO;
 import io.github.brunnodanyel.projetovendas.model.dtoResponse.ProdutoResponseDTO;
 import io.github.brunnodanyel.projetovendas.repositories.ProdutoRepository;
 import io.github.brunnodanyel.projetovendas.services.ProdutoService;
@@ -29,7 +31,7 @@ public class ProdutoServiceImpl implements ProdutoService {
     @Override
     public void cadastrarProduto(ProdutoRequestDTO produtoRequestDTO) {
         Produto produto = converterProdutoRequest(produtoRequestDTO);
-        if(produtoRepository.existsByCodigoDoProduto(produto.getCodigoDoProduto())){
+        if (produtoRepository.existsByCodigoDoProduto(produto.getCodigoDoProduto())) {
             throw new RuntimeException("");
         }
         produto.setDisponibilidade(produto.getQuantidade() >= QUANTIDADE_MINIMA_PARA_DISPONIBILIDADE ? DisponibilidadeEnum.DISPONIVEL : DisponibilidadeEnum.EM_FALTA);
