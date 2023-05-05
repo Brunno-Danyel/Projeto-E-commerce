@@ -8,4 +8,6 @@ import java.util.List;
 public interface EnderecoService {
 
     List<EnderecoResponseDTO> buscarEnderecoCliente(String cpf);
+
+    EnderecoResponseDTO atualizaEnderecoCliente(String cpf, Long idEndereco, EnderecoRequestDTO enderecoRequestDTO);
 }
