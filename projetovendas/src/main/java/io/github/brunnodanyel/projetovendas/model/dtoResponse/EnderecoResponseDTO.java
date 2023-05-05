@@ -1,17 +1,16 @@
 package io.github.brunnodanyel.projetovendas.model.dtoResponse;
 
-import io.github.brunnodanyel.projetovendas.entities.Cliente;
 import lombok.*;
-
-import java.util.List;
 
 @Getter
 @Setter
 public class EnderecoResponseDTO {
 
+    private Long id;
+
     private String cep;
 
-    private String identificação;
+    private String identificacao;
 
     private String logradouro;
 

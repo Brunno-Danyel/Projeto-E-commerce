@@ -21,7 +21,7 @@ public class Endereco {
     private String cep;
 
     @Column(name = "tb_identificao")
-    private String identificação;
+    private String identificacao;
 
     @Column(name = "tb_logradouro")
     private String logradouro;
