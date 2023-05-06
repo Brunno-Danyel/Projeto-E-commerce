@@ -1,6 +1,7 @@
 package io.github.brunnodanyel.projetovendas.controller;
 
 import io.github.brunnodanyel.projetovendas.entities.Cliente;
+import io.github.brunnodanyel.projetovendas.exception.SenhaInvalidaException;
 import io.github.brunnodanyel.projetovendas.model.dtoRequest.ClienteRequestDTO;
 import io.github.brunnodanyel.projetovendas.model.dtoRequest.ClienteUpdateRequestDTO;
 import io.github.brunnodanyel.projetovendas.model.dtoRequest.CredenciaisRequestDTO;
@@ -16,6 +17,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
+import javax.validation.Valid;
+
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("api/clientes")
@@ -28,7 +31,7 @@ public class ClienteController {
     private final JwtService jwtService;
 
     @PostMapping("/cadastrar")
-    public void cadastrarCliente(@RequestBody ClienteRequestDTO clienteRequestDTO){
+    public void cadastrarCliente(@RequestBody @Valid ClienteRequestDTO clienteRequestDTO){
         String senhaCriptografada = encoder.encode(clienteRequestDTO.getSenha());
         clienteRequestDTO.setSenha(senhaCriptografada);
         clienteService.cadastrarCliente(clienteRequestDTO);
