@@ -3,6 +3,8 @@ package io.github.brunnodanyel.projetovendas.services.impl;
 import io.github.brunnodanyel.projetovendas.entities.Produto;
 import io.github.brunnodanyel.projetovendas.enumeration.CategoriaEnum;
 import io.github.brunnodanyel.projetovendas.enumeration.DisponibilidadeEnum;
+import io.github.brunnodanyel.projetovendas.exception.ProdutoException;
+import io.github.brunnodanyel.projetovendas.exception.ProdutoNaoEncontradoException;
 import io.github.brunnodanyel.projetovendas.model.dtoRequest.ProdutoAddRequestDTO;
 import io.github.brunnodanyel.projetovendas.model.dtoRequest.ProdutoRequestDTO;
 import io.github.brunnodanyel.projetovendas.model.dtoRequest.ProdutoUpdateRequestDTO;
@@ -32,7 +34,7 @@ public class ProdutoServiceImpl implements ProdutoService {
     public void cadastrarProduto(ProdutoRequestDTO produtoRequestDTO) {
         Produto produto = converterProdutoRequest(produtoRequestDTO);
         if (produtoRepository.existsByCodigoDoProduto(produto.getCodigoDoProduto())) {
-            throw new RuntimeException("");
+            throw new ProdutoException("Código de produto existente");
         }
         produto.setDisponibilidade(produto.getQuantidade() >= QUANTIDADE_MINIMA_PARA_DISPONIBILIDADE ? DisponibilidadeEnum.DISPONIVEL : DisponibilidadeEnum.EM_FALTA);
         produtoRepository.save(produto);
@@ -46,38 +48,62 @@ public class ProdutoServiceImpl implements ProdutoService {
 
     @Override
     public List<ProdutoResponseDTO> buscarMarcaProduto(String marca) {
-        return produtoRepository.findByMarca(marca).stream()
+        List<ProdutoResponseDTO> produtoResponseDTOS = produtoRepository.findByMarca(marca).stream()
                 .map(this::retornaProduto).collect(Collectors.toList());
+        if(produtoResponseDTOS.isEmpty()){
+            throw new ProdutoNaoEncontradoException("Produto com a marca" + marca + "não foram encontrados");
+        }
+        return produtoResponseDTOS;
     }
 
     @Override
     public List<ProdutoResponseDTO> buscarNomeProduto(String nome) {
-        return produtoRepository.findByNome(nome).stream()
+        List<ProdutoResponseDTO> produtoResponseDTOS =  produtoRepository.findByNome(nome).stream()
                 .map(this::retornaProduto).collect(Collectors.toList());
+        if(produtoResponseDTOS.isEmpty()){
+            throw new ProdutoNaoEncontradoException("Produto " + nome + "não encontrado");
+        }
+        return produtoResponseDTOS;
     }
 
     @Override
     public List<ProdutoResponseDTO> buscarDescricaoProduto(String descricao) {
-        return produtoRepository.findByDescricao(descricao).stream()
+        List<ProdutoResponseDTO> produtoResponseDTOS = produtoRepository.findByDescricao(descricao).stream()
                 .map(this::retornaProduto).collect(Collectors.toList());
+        if(produtoResponseDTOS.isEmpty()){
+            throw new ProdutoNaoEncontradoException("Produto " + descricao + "não encontrado");
+        }
+        return produtoResponseDTOS;
     }
 
     @Override
     public List<ProdutoResponseDTO> buscarCategoriaProduto(String categoria) {
-        return produtoRepository.findByCategoria(categoria).stream()
+        List<ProdutoResponseDTO> produtoResponseDTOS = produtoRepository.findByCategoria(categoria).stream()
                 .map(this::retornaProduto).collect(Collectors.toList());
+        if(produtoResponseDTOS.isEmpty()){
+            throw new ProdutoNaoEncontradoException("Categoria não encontrada");
+        }
+        return produtoResponseDTOS;
     }
 
     @Override
     public List<ProdutoResponseDTO> buscarPrecoProduto(BigDecimal precoInicial, BigDecimal precoFinal) {
-        return produtoRepository.findByPrecoBetween(precoInicial, precoFinal).stream()
+        List<ProdutoResponseDTO> produtoResponseDTOS = produtoRepository.findByPrecoBetween(precoInicial, precoFinal).stream()
                 .map(this::retornaProduto).collect(Collectors.toList());
+        if(produtoResponseDTOS.isEmpty()){
+            throw new ProdutoNaoEncontradoException("Não foram encontrados produtos com esssa faixa de preço");
+        }
+        return produtoResponseDTOS;
     }
 
     @Override
     public List<ProdutoResponseDTO> listarTodos() {
-        return produtoRepository.findAll().stream()
+        List<ProdutoResponseDTO> produtoResponseDTOS = produtoRepository.findAll().stream()
                 .map(this::retornaProduto).collect(Collectors.toList());
+        if(produtoResponseDTOS.isEmpty()){
+            throw new ProdutoNaoEncontradoException("Não existe produtos cadastrados");
+        }
+        return produtoResponseDTOS;
     }
 
     @Override

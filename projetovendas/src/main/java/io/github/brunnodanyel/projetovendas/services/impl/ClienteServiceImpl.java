@@ -2,6 +2,8 @@ package io.github.brunnodanyel.projetovendas.services.impl;
 
 import io.github.brunnodanyel.projetovendas.entities.Cliente;
 import io.github.brunnodanyel.projetovendas.entities.Endereco;
+import io.github.brunnodanyel.projetovendas.exception.ClienteNaoEncontradoException;
+import io.github.brunnodanyel.projetovendas.exception.SenhaInvalidaException;
 import io.github.brunnodanyel.projetovendas.model.dtoRequest.ClienteRequestDTO;
 import io.github.brunnodanyel.projetovendas.model.dtoRequest.ClienteUpdateRequestDTO;
 import io.github.brunnodanyel.projetovendas.model.dtoRequest.EnderecoRequestDTO;
@@ -43,7 +45,7 @@ public class ClienteServiceImpl implements UserDetailsService, ClienteService {
     public void addEnderecoCliente(Long clienteId, EnderecoRequestDTO enderecoRequestDTO) {
         Endereco endereco = modelMapper.map(enderecoRequestDTO, Endereco.class);
         Cliente cliente = clienteRepository.findById(clienteId)
-                .orElseThrow(() -> new RuntimeException("Cliente não encontrado"));
+                .orElseThrow(() -> new ClienteNaoEncontradoException("Cliente " + clienteId + " não encontrado"));
         endereco.setCliente(cliente);
         cliente.getEnderecos().add(endereco);
         clienteRepository.save(cliente);
@@ -51,13 +53,15 @@ public class ClienteServiceImpl implements UserDetailsService, ClienteService {
 
     @Override
     public ClienteResponseDTO buscarId(Long clienteId) {
-        return clienteRepository.findById(clienteId).map(this::retornaCliente).orElseThrow(() -> new RuntimeException("Erro!"));
+        return clienteRepository.findById(clienteId).map(this::retornaCliente)
+                .orElseThrow(() -> new ClienteNaoEncontradoException("Cliente " + clienteId + " não encontrado"));
 
     }
 
     @Override
     public ClienteResponseDTO buscarCpf(String cpf) {
-        return clienteRepository.findByCpf(cpf).map(this::retornaCliente).orElseThrow(() -> new RuntimeException("Erro"));
+        return clienteRepository.findByCpf(cpf).map(this::retornaCliente)
+                .orElseThrow(() -> new ClienteNaoEncontradoException("Cliente " + cpf + " não encontrado"));
     }
 
     @Override
@@ -75,7 +79,7 @@ public class ClienteServiceImpl implements UserDetailsService, ClienteService {
             cliente.setTelefoneCelular(telefoneCelular);
             clienteRepository.save(cliente);
             return retornaCliente(cliente);
-        }).orElseThrow(() -> new RuntimeException(""));
+        }).orElseThrow(() -> new ClienteNaoEncontradoException("Cliente " + cpf + " não encontrado"));
     }
 
     @Override
@@ -85,7 +89,7 @@ public class ClienteServiceImpl implements UserDetailsService, ClienteService {
         if (senhasBatem) {
             return user;
         }
-        throw new RuntimeException("Senha invalida");
+        throw new SenhaInvalidaException("Senha inválida");
     }
 
     private ClienteResponseDTO retornaCliente(Cliente cliente) {
