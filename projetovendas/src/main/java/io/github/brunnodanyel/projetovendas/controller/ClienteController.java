@@ -66,7 +66,7 @@ public class ClienteController {
             return new TokenResponseDTO(cliente.getEmail(), token);
 
         } catch (RuntimeException e) {
-            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, e.getMessage());
+            throw new SenhaInvalidaException("Senha inválida");
         }
     }
 
