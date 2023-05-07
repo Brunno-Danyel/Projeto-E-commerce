@@ -1,7 +1,8 @@
 package io.github.brunnodanyel.projetovendas.controller;
 
 import io.github.brunnodanyel.projetovendas.entities.Cliente;
-import io.github.brunnodanyel.projetovendas.exception.SenhaInvalidaException;
+import io.github.brunnodanyel.projetovendas.exception.SenhaIncorretaException;
+import io.github.brunnodanyel.projetovendas.exception.ServicoCepException;
 import io.github.brunnodanyel.projetovendas.model.dtoRequest.ClienteRequestDTO;
 import io.github.brunnodanyel.projetovendas.model.dtoRequest.ClienteUpdateRequestDTO;
 import io.github.brunnodanyel.projetovendas.model.dtoRequest.CredenciaisRequestDTO;
@@ -11,11 +12,9 @@ import io.github.brunnodanyel.projetovendas.model.dtoResponse.TokenResponseDTO;
 import io.github.brunnodanyel.projetovendas.security.JwtService;
 import io.github.brunnodanyel.projetovendas.services.ClienteService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.server.ResponseStatusException;
 
 import javax.validation.Valid;
 
@@ -31,37 +30,37 @@ public class ClienteController {
     private final JwtService jwtService;
 
     @PostMapping("/cadastrar")
-    public void cadastrarCliente(@RequestBody @Valid ClienteRequestDTO clienteRequestDTO){
+    public void cadastrarCliente(@RequestBody @Valid ClienteRequestDTO clienteRequestDTO) {
         String senhaCriptografada = encoder.encode(clienteRequestDTO.getSenha());
         clienteRequestDTO.setSenha(senhaCriptografada);
         clienteService.cadastrarCliente(clienteRequestDTO);
     }
 
     @PostMapping("/adicionarEndereco/{id}")
-    public void addEnderecoCliente(@PathVariable Long id, @RequestBody EnderecoRequestDTO enderecoRequestDTO){
+    public void addEnderecoCliente(@PathVariable Long id, @RequestBody @Valid EnderecoRequestDTO enderecoRequestDTO) throws ServicoCepException {
         clienteService.addEnderecoCliente(id, enderecoRequestDTO);
     }
 
     @PutMapping("atualizar/cliente")
-    public ClienteResponseDTO atualizarCliente(@RequestParam String cpf, @RequestBody ClienteUpdateRequestDTO requestDTO){
+    public ClienteResponseDTO atualizarCliente(@RequestParam String cpf, @RequestBody ClienteUpdateRequestDTO requestDTO) {
         ClienteResponseDTO clienteResponseDTO = clienteService.atualizarCliente(cpf, requestDTO);
         return clienteResponseDTO;
     }
 
     @GetMapping("buscar/id/{id}")
-    public ClienteResponseDTO buscarId(@PathVariable Long id){
+    public ClienteResponseDTO buscarId(@PathVariable Long id) {
         ClienteResponseDTO clienteResponseDTO = clienteService.buscarId(id);
         return clienteResponseDTO;
     }
 
     @GetMapping("buscar/cpf/")
-    public ClienteResponseDTO buscarCpf(@RequestParam String cpf){
+    public ClienteResponseDTO buscarCpf(@RequestParam String cpf) {
         ClienteResponseDTO clienteResponseDTO = clienteService.buscarCpf(cpf);
         return clienteResponseDTO;
     }
 
     @PostMapping("/auth")
-    public TokenResponseDTO autenticar(@RequestBody CredenciaisRequestDTO dto) {
+    public TokenResponseDTO autenticar(@RequestBody @Valid CredenciaisRequestDTO dto) {
         try {
             Cliente cliente = Cliente.builder().email(dto.getEmail()).senha(dto.getSenha()).build();
             UserDetails usuarioAutenticado = clienteService.autenticar(cliente);
