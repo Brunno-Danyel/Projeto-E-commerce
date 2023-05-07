@@ -2,14 +2,18 @@ package io.github.brunnodanyel.projetovendas.services.impl;
 
 import io.github.brunnodanyel.projetovendas.entities.Cliente;
 import io.github.brunnodanyel.projetovendas.entities.Endereco;
+import io.github.brunnodanyel.projetovendas.exception.CepNaoEncontradoException;
 import io.github.brunnodanyel.projetovendas.exception.ClienteNaoEncontradoException;
 import io.github.brunnodanyel.projetovendas.exception.SenhaInvalidaException;
+import io.github.brunnodanyel.projetovendas.exception.ServicoCepException;
 import io.github.brunnodanyel.projetovendas.model.dtoRequest.ClienteRequestDTO;
 import io.github.brunnodanyel.projetovendas.model.dtoRequest.ClienteUpdateRequestDTO;
 import io.github.brunnodanyel.projetovendas.model.dtoRequest.EnderecoRequestDTO;
 import io.github.brunnodanyel.projetovendas.model.dtoResponse.ClienteResponseDTO;
+import io.github.brunnodanyel.projetovendas.model.dtoResponse.EnderecoResponseDTO;
 import io.github.brunnodanyel.projetovendas.repositories.ClienteRepository;
 import io.github.brunnodanyel.projetovendas.services.ClienteService;
+import org.apache.tomcat.jni.Address;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.User;
@@ -17,6 +21,8 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.HttpServerErrorException;
+import org.springframework.web.client.RestTemplate;
 
 import javax.transaction.Transactional;
 import java.time.LocalDate;
@@ -43,9 +49,22 @@ public class ClienteServiceImpl implements UserDetailsService, ClienteService {
 
     @Override
     public void addEnderecoCliente(Long clienteId, EnderecoRequestDTO enderecoRequestDTO) {
-        Endereco endereco = modelMapper.map(enderecoRequestDTO, Endereco.class);
         Cliente cliente = clienteRepository.findById(clienteId)
                 .orElseThrow(() -> new ClienteNaoEncontradoException("Cliente " + clienteId + " não encontrado"));
+        Endereco endereco = converterEnderecoRequest(enderecoRequestDTO);
+        if (endereco.getNumero().isEmpty()) {
+            endereco.setNumero("S/N");
+        }
+        try {
+            String cep = endereco.getCep();
+            String url = "https://viacep.com.br/ws/" + cep + "/json/";
+            RestTemplate restTemplate = new RestTemplate();
+            Endereco enderecoEncontrado = restTemplate.getForObject(url, Endereco.class);
+            endereco.setLocalidade(enderecoEncontrado.getLocalidade());
+            endereco.setUf(enderecoEncontrado.getUf());
+        }catch (RuntimeException e){
+            throw new CepNaoEncontradoException("Cep " + endereco.getCep() + " não encontrado");
+        }
         endereco.setCliente(cliente);
         cliente.getEnderecos().add(endereco);
         clienteRepository.save(cliente);
@@ -106,6 +125,20 @@ public class ClienteServiceImpl implements UserDetailsService, ClienteService {
         cliente.setTelefoneCelular(clienteRequestDTO.getTelefoneCelular());
         cliente.setSenha(clienteRequestDTO.getSenha());
         return cliente;
+    }
+
+    private static Endereco converterEnderecoRequest(EnderecoRequestDTO enderecoRequestDTO) {
+        Endereco endereco = new Endereco();
+        endereco.setLogradouro(enderecoRequestDTO.getLogradouro());
+        endereco.setNumero(enderecoRequestDTO.getNumero());
+        endereco.setBairro(enderecoRequestDTO.getBairro());
+        endereco.setIdentificacao(enderecoRequestDTO.getIdentificacao());
+        endereco.setComplemento(enderecoRequestDTO.getComplemento());
+        endereco.setReferencia(enderecoRequestDTO.getReferencia());
+        endereco.setLocalidade(enderecoRequestDTO.getLocalidade());
+        endereco.setUf(enderecoRequestDTO.getUf());
+        endereco.setCep(enderecoRequestDTO.getCep());
+        return endereco;
     }
 
     @Override

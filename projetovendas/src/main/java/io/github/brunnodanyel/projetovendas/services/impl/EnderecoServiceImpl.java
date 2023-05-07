@@ -47,7 +47,7 @@ public class EnderecoServiceImpl implements EnderecoService {
             enderecoAt.setNumero(enderecoRequestDTO.getNumero());
             enderecoAt.setComplemento(enderecoRequestDTO.getComplemento());
             enderecoAt.setReferencia(enderecoRequestDTO.getReferencia());
-            enderecoAt.setCidade(enderecoRequestDTO.getCidade());
+            enderecoAt.setLocalidade(enderecoRequestDTO.getLocalidade());
             enderecoAt.setUf(enderecoRequestDTO.getUf());
 
             enderecoRepository.save(enderecoAt);
