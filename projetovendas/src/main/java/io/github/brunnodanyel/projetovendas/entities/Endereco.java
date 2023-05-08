@@ -27,7 +27,7 @@ public class Endereco {
     private String logradouro;
 
     @Column(name = "tb_numero")
-    private Integer numero;
+    private String numero;
 
     @Column(name = "tb_complemento")
     private String complemento;
@@ -39,7 +39,7 @@ public class Endereco {
     private String bairro;
 
     @Column(name = "tb_cidade")
-    private String cidade;
+    private String localidade;
 
     @Column(name = "tb_uf")
     private String uf;

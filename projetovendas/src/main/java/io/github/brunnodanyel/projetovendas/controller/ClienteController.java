@@ -68,7 +68,7 @@ public class ClienteController {
             return new TokenResponseDTO(cliente.getEmail(), token);
 
         } catch (RuntimeException e) {
-            throw new SenhaInvalidaException("Senha inválida");
+            throw new SenhaIncorretaException("Senha inválida");
         }
     }
 

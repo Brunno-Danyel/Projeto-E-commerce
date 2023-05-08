@@ -4,16 +4,13 @@ import io.github.brunnodanyel.projetovendas.entities.Cliente;
 import io.github.brunnodanyel.projetovendas.entities.Endereco;
 import io.github.brunnodanyel.projetovendas.exception.CepNaoEncontradoException;
 import io.github.brunnodanyel.projetovendas.exception.ClienteNaoEncontradoException;
-import io.github.brunnodanyel.projetovendas.exception.SenhaInvalidaException;
-import io.github.brunnodanyel.projetovendas.exception.ServicoCepException;
+import io.github.brunnodanyel.projetovendas.exception.SenhaIncorretaException;
 import io.github.brunnodanyel.projetovendas.model.dtoRequest.ClienteRequestDTO;
 import io.github.brunnodanyel.projetovendas.model.dtoRequest.ClienteUpdateRequestDTO;
 import io.github.brunnodanyel.projetovendas.model.dtoRequest.EnderecoRequestDTO;
 import io.github.brunnodanyel.projetovendas.model.dtoResponse.ClienteResponseDTO;
-import io.github.brunnodanyel.projetovendas.model.dtoResponse.EnderecoResponseDTO;
 import io.github.brunnodanyel.projetovendas.repositories.ClienteRepository;
 import io.github.brunnodanyel.projetovendas.services.ClienteService;
-import org.apache.tomcat.jni.Address;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.User;
@@ -21,7 +18,6 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.client.RestTemplate;
 
 import javax.transaction.Transactional;
@@ -108,7 +104,7 @@ public class ClienteServiceImpl implements UserDetailsService, ClienteService {
         if (senhasBatem) {
             return user;
         }
-        throw new SenhaInvalidaException("Senha inválida");
+        throw new SenhaIncorretaException("Senha inválida");
     }
 
     private ClienteResponseDTO retornaCliente(Cliente cliente) {
@@ -135,8 +131,6 @@ public class ClienteServiceImpl implements UserDetailsService, ClienteService {
         endereco.setIdentificacao(enderecoRequestDTO.getIdentificacao());
         endereco.setComplemento(enderecoRequestDTO.getComplemento());
         endereco.setReferencia(enderecoRequestDTO.getReferencia());
-        endereco.setLocalidade(enderecoRequestDTO.getLocalidade());
-        endereco.setUf(enderecoRequestDTO.getUf());
         endereco.setCep(enderecoRequestDTO.getCep());
         return endereco;
     }
