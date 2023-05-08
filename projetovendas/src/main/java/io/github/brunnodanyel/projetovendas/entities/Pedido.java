@@ -39,11 +39,8 @@ public class Pedido {
     @JoinColumn(name = "cliente_tb_cpf")
     private Cliente cliente;
 
-    @ManyToMany
-    @JoinTable(
-            name = "pedido_produto",
-            joinColumns = @JoinColumn(name = "numero_pedido"),
-            inverseJoinColumns = @JoinColumn(name = "numero_produto")
-    )
-    private List<Produto> produtos;
+    @OneToMany(mappedBy = "pedido")
+    private List<ItemPedido> itens;
+
+    private BigDecimal total;
 }
