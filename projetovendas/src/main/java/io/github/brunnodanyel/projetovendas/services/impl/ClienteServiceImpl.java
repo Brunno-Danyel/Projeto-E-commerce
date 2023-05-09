@@ -13,6 +13,8 @@ import io.github.brunnodanyel.projetovendas.repositories.ClienteRepository;
 import io.github.brunnodanyel.projetovendas.services.ClienteService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -95,6 +97,16 @@ public class ClienteServiceImpl implements UserDetailsService, ClienteService {
             clienteRepository.save(cliente);
             return retornaCliente(cliente);
         }).orElseThrow(() -> new ClienteNaoEncontradoException("Cliente " + cpf + " não encontrado"));
+    }
+
+    public String retornaCpfClienteAutenticado() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication == null || !authentication.isAuthenticated()) {
+            throw new IllegalStateException("Cliente não autenticado.");
+        }
+        String email = authentication.getName();
+        Cliente cliente = clienteRepository.findByEmail(email).orElseThrow(() -> new ClienteNaoEncontradoException("Cliente não encontrado"));
+        return cliente.getCpf();
     }
 
     @Override
