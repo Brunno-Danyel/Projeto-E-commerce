@@ -15,6 +15,6 @@ public class ItensPedidoRequestDTO {
     @NotEmpty(message = "{campo.numeroProduto.obrigatorio}")
     private String numeroProduto;
 
-    @NotNull(message = "campo.quantidade.obrigatorio")
+    @NotNull(message = "{campo.quantidade.obrigatorio}")
     private Integer quantidade;
 }
