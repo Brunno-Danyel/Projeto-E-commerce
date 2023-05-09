@@ -46,6 +46,4 @@ public class Produto {
     @Enumerated(EnumType.STRING)
     private DisponibilidadeEnum disponibilidade;
 
-    @ManyToMany(mappedBy = "produtos")
-    private List<Pedido> pedidos;
 }

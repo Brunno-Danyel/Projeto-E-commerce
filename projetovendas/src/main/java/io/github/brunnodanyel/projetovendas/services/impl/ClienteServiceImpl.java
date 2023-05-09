@@ -2,6 +2,9 @@ package io.github.brunnodanyel.projetovendas.services.impl;
 
 import io.github.brunnodanyel.projetovendas.entities.Cliente;
 import io.github.brunnodanyel.projetovendas.entities.Endereco;
+import io.github.brunnodanyel.projetovendas.exception.CepNaoEncontradoException;
+import io.github.brunnodanyel.projetovendas.exception.ClienteNaoEncontradoException;
+import io.github.brunnodanyel.projetovendas.exception.SenhaIncorretaException;
 import io.github.brunnodanyel.projetovendas.model.dtoRequest.ClienteRequestDTO;
 import io.github.brunnodanyel.projetovendas.model.dtoRequest.ClienteUpdateRequestDTO;
 import io.github.brunnodanyel.projetovendas.model.dtoRequest.EnderecoRequestDTO;
@@ -15,6 +18,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 
 import javax.transaction.Transactional;
 import java.time.LocalDate;
@@ -41,9 +45,22 @@ public class ClienteServiceImpl implements UserDetailsService, ClienteService {
 
     @Override
     public void addEnderecoCliente(Long clienteId, EnderecoRequestDTO enderecoRequestDTO) {
-        Endereco endereco = modelMapper.map(enderecoRequestDTO, Endereco.class);
         Cliente cliente = clienteRepository.findById(clienteId)
-                .orElseThrow(() -> new RuntimeException("Cliente não encontrado"));
+                .orElseThrow(() -> new ClienteNaoEncontradoException("Cliente " + clienteId + " não encontrado"));
+        Endereco endereco = converterEnderecoRequest(enderecoRequestDTO);
+        if (endereco.getNumero().isEmpty()) {
+            endereco.setNumero("S/N");
+        }
+        try {
+            String cep = endereco.getCep();
+            String url = "https://viacep.com.br/ws/" + cep + "/json/";
+            RestTemplate restTemplate = new RestTemplate();
+            Endereco enderecoEncontrado = restTemplate.getForObject(url, Endereco.class);
+            endereco.setLocalidade(enderecoEncontrado.getLocalidade());
+            endereco.setUf(enderecoEncontrado.getUf());
+        }catch (RuntimeException e){
+            throw new CepNaoEncontradoException("Cep " + endereco.getCep() + " não encontrado");
+        }
         endereco.setCliente(cliente);
         cliente.getEnderecos().add(endereco);
         clienteRepository.save(cliente);
@@ -51,13 +68,15 @@ public class ClienteServiceImpl implements UserDetailsService, ClienteService {
 
     @Override
     public ClienteResponseDTO buscarId(Long clienteId) {
-        return clienteRepository.findById(clienteId).map(this::retornaCliente).orElseThrow(() -> new RuntimeException("Erro!"));
+        return clienteRepository.findById(clienteId).map(this::retornaCliente)
+                .orElseThrow(() -> new ClienteNaoEncontradoException("Cliente " + clienteId + " não encontrado"));
 
     }
 
     @Override
     public ClienteResponseDTO buscarCpf(String cpf) {
-        return clienteRepository.findByCpf(cpf).map(this::retornaCliente).orElseThrow(() -> new RuntimeException("Erro"));
+        return clienteRepository.findByCpf(cpf).map(this::retornaCliente)
+                .orElseThrow(() -> new ClienteNaoEncontradoException("Cliente " + cpf + " não encontrado"));
     }
 
     @Override
@@ -75,7 +94,7 @@ public class ClienteServiceImpl implements UserDetailsService, ClienteService {
             cliente.setTelefoneCelular(telefoneCelular);
             clienteRepository.save(cliente);
             return retornaCliente(cliente);
-        }).orElseThrow(() -> new RuntimeException(""));
+        }).orElseThrow(() -> new ClienteNaoEncontradoException("Cliente " + cpf + " não encontrado"));
     }
 
     @Override
@@ -85,7 +104,7 @@ public class ClienteServiceImpl implements UserDetailsService, ClienteService {
         if (senhasBatem) {
             return user;
         }
-        throw new RuntimeException("Senha invalida");
+        throw new SenhaIncorretaException("Senha inválida");
     }
 
     private ClienteResponseDTO retornaCliente(Cliente cliente) {
@@ -102,6 +121,18 @@ public class ClienteServiceImpl implements UserDetailsService, ClienteService {
         cliente.setTelefoneCelular(clienteRequestDTO.getTelefoneCelular());
         cliente.setSenha(clienteRequestDTO.getSenha());
         return cliente;
+    }
+
+    private static Endereco converterEnderecoRequest(EnderecoRequestDTO enderecoRequestDTO) {
+        Endereco endereco = new Endereco();
+        endereco.setLogradouro(enderecoRequestDTO.getLogradouro());
+        endereco.setNumero(enderecoRequestDTO.getNumero());
+        endereco.setBairro(enderecoRequestDTO.getBairro());
+        endereco.setIdentificacao(enderecoRequestDTO.getIdentificacao());
+        endereco.setComplemento(enderecoRequestDTO.getComplemento());
+        endereco.setReferencia(enderecoRequestDTO.getReferencia());
+        endereco.setCep(enderecoRequestDTO.getCep());
+        return endereco;
     }
 
     @Override

@@ -8,6 +8,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.Date;
 import java.util.List;
 
@@ -25,7 +27,7 @@ public class Pedido {
     private String numeroPedido;
 
     @Column(name = "tb_data_pedido")
-    private Date dataDoPedido;
+    private LocalDate dataDoPedido;
 
     @Column(name = "tb_status_pedido")
     private StatusPedidoEnum statusPedido;
@@ -37,11 +39,8 @@ public class Pedido {
     @JoinColumn(name = "cliente_tb_cpf")
     private Cliente cliente;
 
-    @ManyToMany
-    @JoinTable(
-            name = "pedido_produto",
-            joinColumns = @JoinColumn(name = "numero_pedido"),
-            inverseJoinColumns = @JoinColumn(name = "numero_produto")
-    )
-    private List<Produto> produtos;
+    @OneToMany(mappedBy = "pedido")
+    private List<ItemPedido> itens;
+
+    private BigDecimal total;
 }

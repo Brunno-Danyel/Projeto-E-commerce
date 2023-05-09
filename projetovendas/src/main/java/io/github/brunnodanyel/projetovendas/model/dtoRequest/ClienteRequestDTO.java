@@ -1,6 +1,7 @@
 package io.github.brunnodanyel.projetovendas.model.dtoRequest;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import io.github.brunnodanyel.projetovendas.validation.anotacao.ValidPassword;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.validator.constraints.br.CPF;
@@ -33,6 +34,7 @@ public class ClienteRequestDTO {
     private String email;
 
     @NotEmpty(message = "{campo.senha.obrigatorio}")
+    @ValidPassword
     private String senha;
 
 
