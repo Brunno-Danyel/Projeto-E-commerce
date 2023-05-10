@@ -100,6 +100,13 @@ public class PedidoServiceImpl implements PedidoService {
         }).collect(Collectors.toList());
     }
 
+    public List<PedidoResponseDTO> buscarPedidoCpf(){
+        String cpf = clienteService.retornaCpfClienteAutenticado();
+        List<PedidoResponseDTO> listaPedido = pedidoRepository.findByClienteCpf(cpf).stream()
+                .map(this::retornarPedido).collect(Collectors.toList());
+        return listaPedido;
+    }
+
 
     private static Pedido converterRequest(PedidoRequestDTO pedidoRequestDTO) {
         Pedido pedido = new Pedido();
