@@ -21,10 +21,11 @@ public interface ClienteService {
 
     ClienteResponseDTO buscarCpf(String cpf);
 
-    ClienteResponseDTO atualizarCliente(String cpf ,ClienteUpdateRequestDTO clienteUpdateRequestDTO);
+    ClienteResponseDTO atualizarCliente(String cpf, ClienteUpdateRequestDTO clienteUpdateRequestDTO);
 
     UserDetails autenticar(Cliente cliente);
 
+    String retornaCpfClienteAutenticado();
 
 
 }

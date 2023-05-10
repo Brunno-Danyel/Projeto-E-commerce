@@ -34,6 +34,13 @@ public class ControllerException {
         return new ApiErrors(mensagemErro);
     }
 
+    @ExceptionHandler(ProdutoNaoEncontradoException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public ApiErrors handleRegraNegocioException(ProdutoNaoEncontradoException ex) {
+        String mensagemErro = ex.getMessage();
+        return new ApiErrors(mensagemErro);
+    }
+
     @ExceptionHandler(ServicoCepException.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public ApiErrors handleRegraNegocioException(ServicoCepException ex) {
