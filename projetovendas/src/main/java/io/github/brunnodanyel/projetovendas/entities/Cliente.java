@@ -51,6 +51,9 @@ public class Cliente {
     @OneToMany(mappedBy = "cliente", cascade = CascadeType.ALL)
     private List<Pedido> pedidos;
 
+    @OneToOne
+    private Favorito favorito;
+
     private boolean admin;
 
 }
