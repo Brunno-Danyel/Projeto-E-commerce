@@ -55,6 +55,20 @@ public class ControllerException {
         return new ApiErrors(mensagemErro);
     }
 
+    @ExceptionHandler(ProdutoExistenteFavoritoException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ApiErrors handleRegraNegocioException(ProdutoExistenteFavoritoException ex) {
+        String mensagemErro = ex.getMessage();
+        return new ApiErrors(mensagemErro);
+    }
+
+    @ExceptionHandler(ClienteExistenteException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ApiErrors handleRegraNegocioException(ClienteExistenteException ex) {
+        String mensagemErro = ex.getMessage();
+        return new ApiErrors(mensagemErro);
+    }
+
     @ExceptionHandler(PedidoException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ApiErrors handleRegraNegocioException(PedidoException ex) {
