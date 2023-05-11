@@ -1,6 +1,7 @@
 package io.github.brunnodanyel.projetovendas.controller;
 
 import io.github.brunnodanyel.projetovendas.model.dtoRequest.PedidoRequestDTO;
+import io.github.brunnodanyel.projetovendas.model.dtoResponse.PedidoBuscaResponseDTO;
 import io.github.brunnodanyel.projetovendas.model.dtoResponse.PedidoResponseDTO;
 import io.github.brunnodanyel.projetovendas.services.PedidoService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,8 +25,8 @@ public class PedidoController {
     }
 
     @GetMapping("buscar/pedido/cpf")
-    public List<PedidoResponseDTO> buscarPedidoCpf(){
-        List<PedidoResponseDTO> listaPedido = pedidoService.buscarPedidoCpf();
+    public List<PedidoBuscaResponseDTO> buscarPedidoCpf(){
+        List<PedidoBuscaResponseDTO> listaPedido = pedidoService.buscarPedidoCpf();
         return listaPedido;
     }
 }
