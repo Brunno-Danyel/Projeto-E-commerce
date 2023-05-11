@@ -5,6 +5,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.util.List;
 
 @Data
 @AllArgsConstructor
@@ -47,4 +48,7 @@ public class Endereco {
     @ManyToOne
     @JoinColumn(name = "id_cliente")
     private Cliente cliente;
+
+    @OneToMany(mappedBy = "enderecoEntrega", cascade = CascadeType.ALL)
+    private List<Pedido> pedidosEntrega;
 }

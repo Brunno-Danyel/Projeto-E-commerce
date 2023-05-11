@@ -1,23 +1,13 @@
 package io.github.brunnodanyel.projetovendas.services.impl;
 
-import io.github.brunnodanyel.projetovendas.entities.Cliente;
-import io.github.brunnodanyel.projetovendas.entities.ItemPedido;
-import io.github.brunnodanyel.projetovendas.entities.Pedido;
-import io.github.brunnodanyel.projetovendas.entities.Produto;
+import io.github.brunnodanyel.projetovendas.entities.*;
 import io.github.brunnodanyel.projetovendas.enumeration.StatusPedidoEnum;
-import io.github.brunnodanyel.projetovendas.exception.ClienteNaoEncontradoException;
-import io.github.brunnodanyel.projetovendas.exception.PedidoException;
-import io.github.brunnodanyel.projetovendas.exception.ProdutoException;
-import io.github.brunnodanyel.projetovendas.exception.ProdutoNaoEncontradoException;
+import io.github.brunnodanyel.projetovendas.enumeration.TipoEntregaEnum;
+import io.github.brunnodanyel.projetovendas.exception.*;
 import io.github.brunnodanyel.projetovendas.model.dtoRequest.ItensPedidoRequestDTO;
 import io.github.brunnodanyel.projetovendas.model.dtoRequest.PedidoRequestDTO;
-import io.github.brunnodanyel.projetovendas.model.dtoResponse.PedidoClienteResponseDTO;
-import io.github.brunnodanyel.projetovendas.model.dtoResponse.PedidoItemResponseDTO;
-import io.github.brunnodanyel.projetovendas.model.dtoResponse.PedidoResponseDTO;
-import io.github.brunnodanyel.projetovendas.repositories.ClienteRepository;
-import io.github.brunnodanyel.projetovendas.repositories.ItemPedidoRepository;
-import io.github.brunnodanyel.projetovendas.repositories.PedidoRepository;
-import io.github.brunnodanyel.projetovendas.repositories.ProdutoRepository;
+import io.github.brunnodanyel.projetovendas.model.dtoResponse.*;
+import io.github.brunnodanyel.projetovendas.repositories.*;
 import io.github.brunnodanyel.projetovendas.services.ClienteService;
 import io.github.brunnodanyel.projetovendas.services.PedidoService;
 import org.modelmapper.ModelMapper;
@@ -46,6 +36,9 @@ public class PedidoServiceImpl implements PedidoService {
     private ItemPedidoRepository itemPedidoRepository;
 
     @Autowired
+    private EnderecoRepository enderecoRepository;
+
+    @Autowired
     private ModelMapper modelMapper;
 
     @Autowired
@@ -59,13 +52,20 @@ public class PedidoServiceImpl implements PedidoService {
 
         UUID uuid = UUID.randomUUID();
         String numeroPedido = uuid.toString();
+
+        if (pedido.getTipoEntrega().equals(TipoEntregaEnum.ENTREGA)) {
+            Endereco endereco = enderecoRepository.findById(pedidoRequestDTO.getIdEnderecoEntrega())
+                    .orElseThrow(() -> new EnderecoNaoEncontradoException("Endereço não encontrado"));
+            pedido.setEnderecoEntrega(endereco);
+        }
+
         List<ItemPedido> itensPedidos = converterItens(pedido, pedidoRequestDTO.getItens());
         BigDecimal totalPedido = calcularTotalPedido(itensPedidos);
 
         if (itensPedidos.isEmpty()) {
             throw new PedidoException("Não tem produtos para se realizar pedido, adicione os produtos que deseja");
         }
-        pedido.setTotal(totalPedido);
+        pedido.setTotalPedido(totalPedido);
         pedido.setNumeroPedido(numeroPedido);
         pedido.setCliente(cliente);
         pedidoRepository.save(pedido);
@@ -112,6 +112,7 @@ public class PedidoServiceImpl implements PedidoService {
         Pedido pedido = new Pedido();
         pedido.setDataDoPedido(LocalDate.now());
         pedido.setStatusPedido(StatusPedidoEnum.EM_PROCESSAMENTO);
+        pedido.setTipoEntrega(pedidoRequestDTO.getTipoEntrega());
         return pedido;
     }
 
@@ -134,8 +135,15 @@ public class PedidoServiceImpl implements PedidoService {
             return pedidoItemResponseDTO;
         }).collect(Collectors.toList());
 
+        Endereco endereco = pedido.getEnderecoEntrega();
+        EnderecoResponseDTO enderecoResponseDTO = null;
+        if (endereco != null) {
+            enderecoResponseDTO = modelMapper.map(endereco, EnderecoResponseDTO.class);
+        }
+
         PedidoResponseDTO pedidoResponseDTO = modelMapper.map(pedido, PedidoResponseDTO.class);
         pedidoResponseDTO.setCliente(clienteResponseDTO);
+        pedidoResponseDTO.setEnderecoEntrega(enderecoResponseDTO);
         pedidoResponseDTO.setItens(pedidoItemResponseDTOS);
         return pedidoResponseDTO;
     }
