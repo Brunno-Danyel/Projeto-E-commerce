@@ -37,13 +37,13 @@ public class ClienteController {
     }
 
     @PostMapping("/adicionarEndereco/{id}")
-    public void addEnderecoCliente(@PathVariable Long id, @RequestBody @Valid EnderecoRequestDTO enderecoRequestDTO) throws ServicoCepException {
-        clienteService.addEnderecoCliente(id, enderecoRequestDTO);
+    public void addEnderecoCliente(@RequestBody @Valid EnderecoRequestDTO enderecoRequestDTO) throws ServicoCepException {
+        clienteService.addEnderecoCliente(enderecoRequestDTO);
     }
 
     @PutMapping("atualizar/cliente")
-    public ClienteResponseDTO atualizarCliente(@RequestParam String cpf, @RequestBody ClienteUpdateRequestDTO requestDTO) {
-        ClienteResponseDTO clienteResponseDTO = clienteService.atualizarCliente(cpf, requestDTO);
+    public ClienteResponseDTO atualizarCliente(@RequestBody ClienteUpdateRequestDTO requestDTO) {
+        ClienteResponseDTO clienteResponseDTO = clienteService.atualizarCliente(requestDTO);
         return clienteResponseDTO;
     }
 

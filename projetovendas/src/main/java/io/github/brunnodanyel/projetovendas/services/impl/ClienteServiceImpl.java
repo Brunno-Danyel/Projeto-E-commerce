@@ -3,6 +3,7 @@ package io.github.brunnodanyel.projetovendas.services.impl;
 import io.github.brunnodanyel.projetovendas.entities.Cliente;
 import io.github.brunnodanyel.projetovendas.entities.Endereco;
 import io.github.brunnodanyel.projetovendas.exception.CepNaoEncontradoException;
+import io.github.brunnodanyel.projetovendas.exception.ClienteExistenteException;
 import io.github.brunnodanyel.projetovendas.exception.ClienteNaoEncontradoException;
 import io.github.brunnodanyel.projetovendas.exception.SenhaIncorretaException;
 import io.github.brunnodanyel.projetovendas.model.dtoRequest.ClienteRequestDTO;
@@ -42,13 +43,17 @@ public class ClienteServiceImpl implements UserDetailsService, ClienteService {
     @Transactional
     public void cadastrarCliente(ClienteRequestDTO clienteRequestDTO) {
         Cliente cliente = converterClienteRequest(clienteRequestDTO);
+        if(clienteRepository.existsByCpf(cliente.getCpf()) || clienteRepository.existsByEmail(cliente.getEmail())){
+            throw new ClienteExistenteException("Já existe um cadastro para o e-mail ou documento informado.");
+        }
         clienteRepository.save(cliente);
     }
 
     @Override
-    public void addEnderecoCliente(Long clienteId, EnderecoRequestDTO enderecoRequestDTO) {
-        Cliente cliente = clienteRepository.findById(clienteId)
-                .orElseThrow(() -> new ClienteNaoEncontradoException("Cliente " + clienteId + " não encontrado"));
+    public void addEnderecoCliente(EnderecoRequestDTO enderecoRequestDTO) {
+        String cpf = retornaCpfClienteAutenticado();
+        Cliente cliente = clienteRepository.findByCpf(cpf)
+                .orElseThrow(() -> new ClienteNaoEncontradoException("Cliente não encontrado"));
         Endereco endereco = converterEnderecoRequest(enderecoRequestDTO);
         if (endereco.getNumero().isEmpty()) {
             endereco.setNumero("S/N");
@@ -82,7 +87,8 @@ public class ClienteServiceImpl implements UserDetailsService, ClienteService {
     }
 
     @Override
-    public ClienteResponseDTO atualizarCliente(String cpf, ClienteUpdateRequestDTO clienteUpdateRequestDTO) {
+    public ClienteResponseDTO atualizarCliente(ClienteUpdateRequestDTO clienteUpdateRequestDTO) {
+        String cpf = retornaCpfClienteAutenticado();
         return clienteRepository.findByCpf(cpf).map(cliente -> {
 
             String email = clienteUpdateRequestDTO.getEmail().isEmpty() ? cliente.getEmail() : clienteUpdateRequestDTO.getEmail();
