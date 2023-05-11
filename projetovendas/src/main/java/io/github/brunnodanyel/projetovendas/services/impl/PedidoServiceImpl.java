@@ -100,10 +100,10 @@ public class PedidoServiceImpl implements PedidoService {
         }).collect(Collectors.toList());
     }
 
-    public List<PedidoResponseDTO> buscarPedidoCpf(){
+    public List<PedidoBuscaResponseDTO> buscarPedidoCpf() {
         String cpf = clienteService.retornaCpfClienteAutenticado();
-        List<PedidoResponseDTO> listaPedido = pedidoRepository.findByClienteCpf(cpf).stream()
-                .map(this::retornarPedido).collect(Collectors.toList());
+        List<PedidoBuscaResponseDTO> listaPedido = pedidoRepository.findByClienteCpf(cpf).stream()
+                .map(pedido -> modelMapper.map(pedido, PedidoBuscaResponseDTO.class)).collect(Collectors.toList());
         return listaPedido;
     }
 
