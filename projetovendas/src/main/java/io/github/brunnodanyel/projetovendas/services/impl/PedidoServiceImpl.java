@@ -75,25 +75,23 @@ public class PedidoServiceImpl implements PedidoService {
     }
 
     private List<ItemPedido> converterItens(Pedido pedido, List<ItensPedidoRequestDTO> itens) {
-        return itens.stream().map(dto -> {
-            String numeroProduto = dto.getNumeroProduto();
+        return itens.stream().map(itemPedidoDto -> {
+            String numeroProduto = itemPedidoDto.getNumeroProduto();
             Produto produto = produtoRepository.findByCodigoDoProduto(numeroProduto)
                     .orElseThrow(() -> new ProdutoNaoEncontradoException("Codigo do produto não encontrado: " + numeroProduto));
 
-            Integer quantidade = dto.getQuantidade();
-            Integer quantidadeProduto = produto.getQuantidade() - quantidade;
+            Integer quantidadePedido = itemPedidoDto.getQuantidade();
+            Integer quantidadeDisponivel = produto.getQuantidade();
+            Integer quantidadeProduto = quantidadeDisponivel - quantidadePedido;
 
-            if (produto.getQuantidade() <= 0) {
-                throw new ProdutoException("Produto em falta!");
+            if (produto.getQuantidade() < quantidadePedido) {
+                throw new ProdutoException("Não temos produto suficientes para atender a essa quantidade que deseja!");
             }
 
-            BigDecimal quantidadeBD = BigDecimal.valueOf(dto.getQuantidade());
+            BigDecimal quantidadeBD = BigDecimal.valueOf(itemPedidoDto.getQuantidade());
             BigDecimal totalProduto = produto.getPreco().multiply(quantidadeBD);
-            ItemPedido itemPedido = new ItemPedido();
-            itemPedido.setQuantidade(dto.getQuantidade());
-            itemPedido.setProduto(produto);
-            itemPedido.setPedido(pedido);
-            itemPedido.setTotalProduto(totalProduto);
+
+            ItemPedido itemPedido = criarItemPedido(pedido, produto, quantidadePedido, totalProduto);
             produto.setQuantidade(quantidadeProduto);
             produtoRepository.save(produto);
             return itemPedido;
