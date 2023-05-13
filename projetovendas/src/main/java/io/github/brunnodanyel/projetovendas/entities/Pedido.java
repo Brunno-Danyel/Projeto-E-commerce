@@ -1,8 +1,10 @@
 package io.github.brunnodanyel.projetovendas.entities;
 
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import io.github.brunnodanyel.projetovendas.enumeration.PagamentoEnum;
 import io.github.brunnodanyel.projetovendas.enumeration.StatusPedidoEnum;
+import io.github.brunnodanyel.projetovendas.enumeration.TipoEntregaEnum;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -42,5 +44,12 @@ public class Pedido {
     @OneToMany(mappedBy = "pedido")
     private List<ItemPedido> itens;
 
-    private BigDecimal total;
+    private TipoEntregaEnum tipoEntrega;
+
+    @ManyToOne
+    @JoinColumn(name = "id_endereco")
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    private Endereco enderecoEntrega;
+
+    private BigDecimal totalPedido;
 }

@@ -15,13 +15,13 @@ public interface ClienteService {
 
     void cadastrarCliente(ClienteRequestDTO clienteRequestDTO);
 
-    void addEnderecoCliente(Long id, EnderecoRequestDTO enderecoRequestDTO);
+    void addEnderecoCliente(EnderecoRequestDTO enderecoRequestDTO);
 
     ClienteResponseDTO buscarId(Long id);
 
     ClienteResponseDTO buscarCpf(String cpf);
 
-    ClienteResponseDTO atualizarCliente(String cpf, ClienteUpdateRequestDTO clienteUpdateRequestDTO);
+    ClienteResponseDTO atualizarCliente(ClienteUpdateRequestDTO clienteUpdateRequestDTO);
 
     UserDetails autenticar(Cliente cliente);
 

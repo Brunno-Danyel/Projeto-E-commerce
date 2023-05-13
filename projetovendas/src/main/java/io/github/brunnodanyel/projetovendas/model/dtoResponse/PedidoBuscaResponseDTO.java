@@ -1,8 +1,6 @@
 package io.github.brunnodanyel.projetovendas.model.dtoResponse;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import io.github.brunnodanyel.projetovendas.entities.Endereco;
-import io.github.brunnodanyel.projetovendas.entities.ItemPedido;
 import io.github.brunnodanyel.projetovendas.enumeration.PagamentoEnum;
 import io.github.brunnodanyel.projetovendas.enumeration.StatusPedidoEnum;
 import io.github.brunnodanyel.projetovendas.enumeration.TipoEntregaEnum;
@@ -15,7 +13,7 @@ import java.util.List;
 
 @Getter
 @Setter
-public class PedidoResponseDTO {
+public class PedidoBuscaResponseDTO {
 
     private String numeroPedido;
 
@@ -25,8 +23,6 @@ public class PedidoResponseDTO {
 
     private PagamentoEnum pagamentoEnum;
 
-    private PedidoClienteResponseDTO cliente;
-
     private TipoEntregaEnum tipoEntrega;
 
     @JsonInclude(JsonInclude.Include.NON_NULL)
@@ -34,5 +30,5 @@ public class PedidoResponseDTO {
 
     private List<PedidoItemResponseDTO> itens;
 
-    private BigDecimal totalPedido;
+    private BigDecimal total;
 }
