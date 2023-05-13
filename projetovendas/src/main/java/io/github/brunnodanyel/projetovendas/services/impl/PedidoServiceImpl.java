@@ -124,6 +124,15 @@ public class PedidoServiceImpl implements PedidoService {
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
     }
 
+    private ItemPedido criarItemPedido(Pedido pedido, Produto produto, Integer quantidade, BigDecimal totalProduto) {
+        ItemPedido itemPedido = new ItemPedido();
+        itemPedido.setQuantidade(quantidade);
+        itemPedido.setProduto(produto);
+        itemPedido.setPedido(pedido);
+        itemPedido.setTotalProduto(totalProduto);
+        return itemPedido;
+    }
+
     private PedidoResponseDTO retornarPedido(Pedido pedido) {
         Cliente cliente = pedido.getCliente();
         PedidoClienteResponseDTO clienteResponseDTO = modelMapper.map(cliente, PedidoClienteResponseDTO.class);
