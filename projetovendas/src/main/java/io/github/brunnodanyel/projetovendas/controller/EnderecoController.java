@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.List;
 
 @RestController
@@ -24,7 +25,7 @@ public class EnderecoController {
 
     @PutMapping("atualizar/{id}")
     public EnderecoResponseDTO atualizarEnderecoCliente(@PathVariable Long id,
-                                                        @RequestBody EnderecoRequestDTO enderecoRequestDTO) {
+                                                        @RequestBody @Valid EnderecoRequestDTO enderecoRequestDTO) {
         EnderecoResponseDTO endereco = enderecoService.atualizaEnderecoCliente(id, enderecoRequestDTO);
         return endereco;
     }
