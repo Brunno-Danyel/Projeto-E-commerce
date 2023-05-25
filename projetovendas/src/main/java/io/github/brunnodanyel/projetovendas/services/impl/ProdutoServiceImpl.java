@@ -124,7 +124,7 @@ public class ProdutoServiceImpl implements ProdutoService {
             produto.setPreco(preco);
             produtoRepository.save(produto);
             return modelMapper.map(produto, ProdutoResponseAdminDTO.class);
-        }).orElseThrow(() -> new RuntimeException(""));
+        }).orElseThrow(() -> new ProdutoNaoEncontradoException("Produto não encontrado!"));
     }
 
     @Override
@@ -133,7 +133,7 @@ public class ProdutoServiceImpl implements ProdutoService {
             produto.setQuantidade(produto.getQuantidade() + produtoAddRequestDTO.getQuantidade());
             produtoRepository.save(produto);
             return retornaProduto(produto);
-        }).orElseThrow(() -> new RuntimeException(""));
+        }).orElseThrow(() -> new ProdutoNaoEncontradoException("Produto não encontrado!"));
     }
 
     private ProdutoResponseDTO retornaProduto(Produto produto) {
