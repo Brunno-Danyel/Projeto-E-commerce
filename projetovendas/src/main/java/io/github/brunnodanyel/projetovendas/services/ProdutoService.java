@@ -3,6 +3,7 @@ package io.github.brunnodanyel.projetovendas.services;
 import io.github.brunnodanyel.projetovendas.model.dtoRequest.ProdutoAddRequestDTO;
 import io.github.brunnodanyel.projetovendas.model.dtoRequest.ProdutoRequestDTO;
 import io.github.brunnodanyel.projetovendas.model.dtoRequest.ProdutoUpdateRequestDTO;
+import io.github.brunnodanyel.projetovendas.model.dtoResponse.ProdutoResponseAdminDTO;
 import io.github.brunnodanyel.projetovendas.model.dtoResponse.ProdutoResponseDTO;
 import org.springframework.stereotype.Service;
 
@@ -27,7 +28,7 @@ public interface ProdutoService {
 
     List<ProdutoResponseDTO> listarTodos();
 
-    ProdutoResponseDTO atualizarProduto(String cod, ProdutoUpdateRequestDTO produtoUpdateRequestDTO);
+    ProdutoResponseAdminDTO atualizarProduto(String cod, ProdutoUpdateRequestDTO produtoUpdateRequestDTO);
 
     ProdutoResponseDTO addProduto(String cod, ProdutoAddRequestDTO produtoAddRequestDTO);
 }

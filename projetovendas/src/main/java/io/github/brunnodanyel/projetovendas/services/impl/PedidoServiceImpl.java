@@ -71,7 +71,7 @@ public class PedidoServiceImpl implements PedidoService {
         pedidoRepository.save(pedido);
         itemPedidoRepository.saveAll(itensPedidos);
         pedido.setItens(itensPedidos);
-        return retornarPedido(pedido);
+        return modelMapper.map(pedido, PedidoResponseDTO.class);
     }
 
     private List<ItemPedido> converterItens(Pedido pedido, List<ItensPedidoRequestDTO> itens) {
@@ -133,27 +133,27 @@ public class PedidoServiceImpl implements PedidoService {
         return itemPedido;
     }
 
-    private PedidoResponseDTO retornarPedido(Pedido pedido) {
-        Cliente cliente = pedido.getCliente();
-        PedidoClienteResponseDTO clienteResponseDTO = modelMapper.map(cliente, PedidoClienteResponseDTO.class);
-
-        List<PedidoItemResponseDTO> pedidoItemResponseDTOS = pedido.getItens().stream().map(itemPedido -> {
-            PedidoItemResponseDTO pedidoItemResponseDTO = modelMapper.map(itemPedido, PedidoItemResponseDTO.class);
-            return pedidoItemResponseDTO;
-        }).collect(Collectors.toList());
-
-        Endereco endereco = pedido.getEnderecoEntrega();
-        EnderecoResponseDTO enderecoResponseDTO = null;
-        if (endereco != null) {
-            enderecoResponseDTO = modelMapper.map(endereco, EnderecoResponseDTO.class);
-        }
-
-        PedidoResponseDTO pedidoResponseDTO = modelMapper.map(pedido, PedidoResponseDTO.class);
-        pedidoResponseDTO.setCliente(clienteResponseDTO);
-        pedidoResponseDTO.setEnderecoEntrega(enderecoResponseDTO);
-        pedidoResponseDTO.setItens(pedidoItemResponseDTOS);
-        return pedidoResponseDTO;
-    }
+//    private PedidoResponseDTO retornarPedido(Pedido pedido) {
+//        Cliente cliente = pedido.getCliente();
+//        PedidoClienteResponseDTO clienteResponseDTO = modelMapper.map(cliente, PedidoClienteResponseDTO.class);
+//
+//        List<PedidoItemResponseDTO> pedidoItemResponseDTOS = pedido.getItens().stream().map(itemPedido -> {
+//            PedidoItemResponseDTO pedidoItemResponseDTO = modelMapper.map(itemPedido, PedidoItemResponseDTO.class);
+//            return pedidoItemResponseDTO;
+//        }).collect(Collectors.toList());
+//
+//        Endereco endereco = pedido.getEnderecoEntrega();
+//        EnderecoResponseDTO enderecoResponseDTO = null;
+//        if (endereco != null) {
+//            enderecoResponseDTO = modelMapper.map(endereco, EnderecoResponseDTO.class);
+//        }
+//
+//        PedidoResponseDTO pedidoResponseDTO = modelMapper.map(pedido, PedidoResponseDTO.class);
+//        pedidoResponseDTO.setCliente(clienteResponseDTO);
+//        pedidoResponseDTO.setEnderecoEntrega(enderecoResponseDTO);
+//        pedidoResponseDTO.setItens(pedidoItemResponseDTOS);
+//        return pedidoResponseDTO;
+//    }
 
 
 }

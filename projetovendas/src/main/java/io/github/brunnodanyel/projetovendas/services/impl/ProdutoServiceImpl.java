@@ -8,6 +8,7 @@ import io.github.brunnodanyel.projetovendas.exception.ProdutoNaoEncontradoExcept
 import io.github.brunnodanyel.projetovendas.model.dtoRequest.ProdutoAddRequestDTO;
 import io.github.brunnodanyel.projetovendas.model.dtoRequest.ProdutoRequestDTO;
 import io.github.brunnodanyel.projetovendas.model.dtoRequest.ProdutoUpdateRequestDTO;
+import io.github.brunnodanyel.projetovendas.model.dtoResponse.ProdutoResponseAdminDTO;
 import io.github.brunnodanyel.projetovendas.model.dtoResponse.ProdutoResponseDTO;
 import io.github.brunnodanyel.projetovendas.repositories.ProdutoRepository;
 import io.github.brunnodanyel.projetovendas.services.ProdutoService;
@@ -43,7 +44,7 @@ public class ProdutoServiceImpl implements ProdutoService {
     @Override
     public ProdutoResponseDTO buscarCodigoDoProduto(String cod) {
         return produtoRepository.findByCodigoDoProduto(cod).map(this::retornaProduto)
-                .orElseThrow(() -> new RuntimeException(""));
+                .orElseThrow(() -> new ProdutoNaoEncontradoException("Produto com o código " + cod + " não encontrado"));
     }
 
     @Override
@@ -107,7 +108,7 @@ public class ProdutoServiceImpl implements ProdutoService {
     }
 
     @Override
-    public ProdutoResponseDTO atualizarProduto(String cod, ProdutoUpdateRequestDTO produtoUpdateRequestDTO) {
+    public ProdutoResponseAdminDTO atualizarProduto(String cod, ProdutoUpdateRequestDTO produtoUpdateRequestDTO) {
         return produtoRepository.findByCodigoDoProduto(cod).map(produto -> {
 
             String nome = produtoUpdateRequestDTO.getNome().isEmpty() ? produto.getNome() : produtoUpdateRequestDTO.getNome();
@@ -122,8 +123,8 @@ public class ProdutoServiceImpl implements ProdutoService {
             produto.setCategoria(categoria);
             produto.setPreco(preco);
             produtoRepository.save(produto);
-            return retornaProduto(produto);
-        }).orElseThrow(() -> new RuntimeException(""));
+            return modelMapper.map(produto, ProdutoResponseAdminDTO.class);
+        }).orElseThrow(() -> new ProdutoNaoEncontradoException("Produto não encontrado!"));
     }
 
     @Override
@@ -132,7 +133,7 @@ public class ProdutoServiceImpl implements ProdutoService {
             produto.setQuantidade(produto.getQuantidade() + produtoAddRequestDTO.getQuantidade());
             produtoRepository.save(produto);
             return retornaProduto(produto);
-        }).orElseThrow(() -> new RuntimeException(""));
+        }).orElseThrow(() -> new ProdutoNaoEncontradoException("Produto não encontrado!"));
     }
 
     private ProdutoResponseDTO retornaProduto(Produto produto) {

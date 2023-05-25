@@ -29,6 +29,7 @@ import java.time.LocalDate;
 @Service
 public class ClienteServiceImpl implements UserDetailsService, ClienteService {
 
+    public static final int IDADE_MINIMA = 18;
     @Autowired
     private ClienteRepository clienteRepository;
 
@@ -46,6 +47,7 @@ public class ClienteServiceImpl implements UserDetailsService, ClienteService {
         if(clienteRepository.existsByCpf(cliente.getCpf()) || clienteRepository.existsByEmail(cliente.getEmail())){
             throw new ClienteExistenteException("Já existe um cadastro para o e-mail ou documento informado.");
         }
+        verificarDataCliente(cliente);
         clienteRepository.save(cliente);
     }
 
@@ -128,6 +130,15 @@ public class ClienteServiceImpl implements UserDetailsService, ClienteService {
     private ClienteResponseDTO retornaCliente(Cliente cliente) {
         ClienteResponseDTO clienteResponseDTO = modelMapper.map(cliente, ClienteResponseDTO.class);
         return clienteResponseDTO;
+    }
+
+    private void verificarDataCliente(Cliente cliente){
+        LocalDate dataAtual = LocalDate.now();
+        LocalDate dataMinima = dataAtual.minusYears(IDADE_MINIMA);
+        LocalDate dataNascimento = cliente.getDataNascimento();
+        if(dataNascimento.isAfter(dataMinima)){
+            throw new RuntimeException("Cliente dever ter pelo menos 18 anos");
+        }
     }
 
     private static Cliente converterClienteRequest(ClienteRequestDTO clienteRequestDTO) {
