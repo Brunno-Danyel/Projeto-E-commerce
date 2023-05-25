@@ -29,6 +29,7 @@ import java.time.LocalDate;
 @Service
 public class ClienteServiceImpl implements UserDetailsService, ClienteService {
 
+    public static final int IDADE_MINIMA = 18;
     @Autowired
     private ClienteRepository clienteRepository;
 
@@ -133,7 +134,7 @@ public class ClienteServiceImpl implements UserDetailsService, ClienteService {
 
     private void verificarDataCliente(Cliente cliente){
         LocalDate dataAtual = LocalDate.now();
-        LocalDate dataMinima = dataAtual.minusYears(18);
+        LocalDate dataMinima = dataAtual.minusYears(IDADE_MINIMA);
         LocalDate dataNascimento = cliente.getDataNascimento();
         if(dataNascimento.isAfter(dataMinima)){
             throw new RuntimeException("Cliente dever ter pelo menos 18 anos");
