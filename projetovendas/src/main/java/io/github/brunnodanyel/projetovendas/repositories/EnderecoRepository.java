@@ -9,7 +9,8 @@ public interface EnderecoRepository extends JpaRepository<Endereco, Long> {
 
     Optional<List<Endereco>> findByClienteCpf(String cpf);
 
-    Optional<Endereco> findByClienteCpfAndId(String cpf, Long id);
+    Optional<Endereco> findByClienteIdAndId(Long idCliente, Long id);
 
 
+    Optional<List<Endereco>> findByClienteId(Long id);
 }

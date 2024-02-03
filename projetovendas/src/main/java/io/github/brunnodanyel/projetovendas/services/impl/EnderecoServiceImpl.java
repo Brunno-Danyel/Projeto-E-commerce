@@ -1,5 +1,6 @@
 package io.github.brunnodanyel.projetovendas.services.impl;
 
+import io.github.brunnodanyel.projetovendas.entities.Cliente;
 import io.github.brunnodanyel.projetovendas.entities.Endereco;
 import io.github.brunnodanyel.projetovendas.exception.ClienteNaoEncontradoException;
 import io.github.brunnodanyel.projetovendas.exception.EnderecoNaoEncontradoException;
@@ -30,8 +31,8 @@ public class EnderecoServiceImpl implements EnderecoService {
 
     @Override
     public List<EnderecoResponseDTO> buscarEnderecoCliente() {
-        String cpf = clienteService.retornaCpfClienteAutenticado();
-        List<Endereco> enderecos = enderecoRepository.findByClienteCpf(cpf)
+        Cliente cliente = clienteService.usuarioAutenticado();
+        List<Endereco> enderecos = enderecoRepository.findByClienteId(cliente.getId())
                 .orElseThrow(() -> new ClienteNaoEncontradoException("Cliente não encontrado"));
         if(enderecos.isEmpty()){
             throw new EnderecoNaoEncontradoException("Cliente não possui endereços");
@@ -41,23 +42,23 @@ public class EnderecoServiceImpl implements EnderecoService {
     }
 
     public EnderecoResponseDTO atualizaEnderecoCliente(Long idEndereco, EnderecoRequestDTO enderecoRequestDTO) {
-        String cpf = clienteService.retornaCpfClienteAutenticado();
-        EnderecoResponseDTO enderecoResponseDTO = enderecoRepository.findByClienteCpfAndId(cpf, idEndereco).map(endereco -> {
-            Endereco enderecoAt = enderecoRepository.findById(idEndereco)
-                    .orElseThrow(() -> new EnderecoNaoEncontradoException("Endereço não encontrado"));
+        Cliente cliente = clienteService.usuarioAutenticado();
+        return enderecoRepository.findByClienteIdAndId(cliente.getId(), idEndereco)
+                .map(endereco -> {
+                    Endereco enderecoAt = enderecoRepository.findById(idEndereco)
+                            .orElseThrow(() -> new EnderecoNaoEncontradoException("Endereço não encontrado"));
 
-            enderecoAt.setBairro(enderecoRequestDTO.getBairro());
-            enderecoAt.setCep(enderecoRequestDTO.getCep());
-            enderecoAt.setIdentificacao(enderecoRequestDTO.getIdentificacao());
-            enderecoAt.setLogradouro(enderecoRequestDTO.getLogradouro());
-            enderecoAt.setNumero(enderecoRequestDTO.getNumero());
-            enderecoAt.setComplemento(enderecoRequestDTO.getComplemento());
-            enderecoAt.setReferencia(enderecoRequestDTO.getReferencia());
+                    enderecoAt.setBairro(enderecoRequestDTO.getBairro());
+                    enderecoAt.setCep(enderecoRequestDTO.getCep());
+                    enderecoAt.setIdentificacao(enderecoRequestDTO.getIdentificacao());
+                    enderecoAt.setLogradouro(enderecoRequestDTO.getLogradouro());
+                    enderecoAt.setNumero(enderecoRequestDTO.getNumero());
+                    enderecoAt.setComplemento(enderecoRequestDTO.getComplemento());
+                    enderecoAt.setReferencia(enderecoRequestDTO.getReferencia());
 
-            enderecoRepository.save(enderecoAt);
-            return modelMapper.map(enderecoAt, EnderecoResponseDTO.class);
-        }).orElseThrow(() -> new ClienteNaoEncontradoException("Cliente não encontrado"));
-        return enderecoResponseDTO;
+                    enderecoRepository.save(enderecoAt);
+                    return modelMapper.map(enderecoAt, EnderecoResponseDTO.class);
+                }).orElseThrow(() -> new ClienteNaoEncontradoException("Cliente não encontrado"));
     }
 
 
