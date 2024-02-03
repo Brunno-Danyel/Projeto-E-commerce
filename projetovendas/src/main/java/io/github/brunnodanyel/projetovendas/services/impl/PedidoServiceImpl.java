@@ -1,7 +1,7 @@
 package io.github.brunnodanyel.projetovendas.services.impl;
 
 import io.github.brunnodanyel.projetovendas.entities.*;
-import io.github.brunnodanyel.projetovendas.enumeration.StatusPedidoEnum;
+import io.github.brunnodanyel.projetovendas.enumeration.*;
 import io.github.brunnodanyel.projetovendas.enumeration.TipoEntregaEnum;
 import io.github.brunnodanyel.projetovendas.exception.BadRequestExecption;
 import io.github.brunnodanyel.projetovendas.exception.EntidadeNaoEncontrada;
@@ -24,6 +24,8 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
+
+import static io.github.brunnodanyel.projetovendas.enumeration.StatusPedidoEnum.*;
 
 @Service
 public class PedidoServiceImpl implements PedidoService {
@@ -72,6 +74,16 @@ public class PedidoServiceImpl implements PedidoService {
         itemPedidoRepository.saveAll(itensPedidos);
         pedido.setItens(itensPedidos);
         return modelMapper.map(pedido, PedidoResponseDTO.class);
+    }
+
+    public void cancelaPedido(Long idPedido) {
+        pedidoRepository.findById(idPedido).map(pedido -> {
+            if(pedido.getStatusPedido().equals(ENTREGUE) || pedido.getStatusPedido().equals(CONCLUIDO)){
+                throw new BadRequestExecption("Pedido não pode ser cancelar pois está com status: " + pedido.getStatusPedido().name());
+            }
+            pedido.setStatusPedido(CANCELADO);
+            return pedido;
+        }).orElseThrow(() -> new EntidadeNaoEncontrada("Pedido não encontrado!"));
     }
 
     private List<ItemPedido> converterItens(Pedido pedido, List<ItensPedidoRequestDTO> itens) {
