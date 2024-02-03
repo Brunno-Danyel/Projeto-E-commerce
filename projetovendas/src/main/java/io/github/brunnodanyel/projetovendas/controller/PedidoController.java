@@ -5,11 +5,11 @@ import io.github.brunnodanyel.projetovendas.model.dtoResponse.PedidoBuscaRespons
 import io.github.brunnodanyel.projetovendas.model.dtoResponse.PedidoResponseDTO;
 import io.github.brunnodanyel.projetovendas.services.PedidoService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.List;
+import static org.springframework.http.HttpStatus.*;
 
 @RestController
 @RequestMapping("api/pedido")
@@ -19,7 +19,7 @@ public class PedidoController {
     private PedidoService pedidoService;
 
     @PostMapping("/realizarPedido")
-    @ResponseStatus(HttpStatus.CREATED)
+    @ResponseStatus(CREATED)
     public PedidoResponseDTO realizarPedido(@RequestBody @Valid PedidoRequestDTO pedidoRequestDTO){
         return pedidoService.realizarPedido(pedidoRequestDTO);
     }

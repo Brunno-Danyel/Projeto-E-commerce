@@ -17,6 +17,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import static org.springframework.http.HttpStatus.*;
 
 @RequiredArgsConstructor
 @RestController
@@ -30,6 +31,7 @@ public class ClienteController {
     private final JwtService jwtService;
 
     @PostMapping("/cadastrar")
+    @ResponseStatus(CREATED)
     public void cadastrarCliente(@RequestBody @Valid ClienteRequestDTO clienteRequestDTO) {
         String senhaCriptografada = encoder.encode(clienteRequestDTO.getSenha());
         clienteRequestDTO.setSenha(senhaCriptografada);
@@ -42,6 +44,7 @@ public class ClienteController {
     }
 
     @PutMapping("atualizar/cliente")
+    @ResponseStatus(NO_CONTENT)
     public ClienteResponseDTO atualizarCliente(@RequestBody ClienteUpdateRequestDTO requestDTO) {
         return clienteService.atualizarCliente(requestDTO);
     }

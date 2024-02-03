@@ -6,13 +6,13 @@ import io.github.brunnodanyel.projetovendas.model.dtoRequest.ProdutoUpdateReques
 import io.github.brunnodanyel.projetovendas.model.dtoResponse.ProdutoResponseAdminDTO;
 import io.github.brunnodanyel.projetovendas.model.dtoResponse.ProdutoResponseDTO;
 import io.github.brunnodanyel.projetovendas.services.ProdutoService;
-import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.math.BigDecimal;
 import java.util.List;
+import static org.springframework.http.HttpStatus.*;
 
 @RestController
 @RequestMapping("api/produto")
@@ -22,6 +22,7 @@ public class ProdutoController {
     private ProdutoService produtoService;
 
     @PostMapping("/cadastrar")
+    @ResponseStatus(CREATED)
     public void cadastrarProduto(@RequestBody @Valid ProdutoRequestDTO produtoRequestDTO) {
         produtoService.cadastrarProduto(produtoRequestDTO);
     }
@@ -63,11 +64,13 @@ public class ProdutoController {
     }
 
     @PutMapping("/adicionar-produto/{cod}")
+    @ResponseStatus(NO_CONTENT)
     public ProdutoResponseDTO addProduto(@PathVariable String cod, @RequestBody ProdutoAddRequestDTO produtoAddRequestDTO) {
         return produtoService.addProduto(cod, produtoAddRequestDTO);
     }
 
     @PutMapping("/atualizar/{cod}")
+    @ResponseStatus(NO_CONTENT)
     public ProdutoResponseAdminDTO atualizarProduto(@PathVariable String cod, @RequestBody ProdutoUpdateRequestDTO produtoUpdateRequestDTO) {
         return produtoService.atualizarProduto(cod, produtoUpdateRequestDTO);
     }
