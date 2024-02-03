@@ -3,9 +3,8 @@ package io.github.brunnodanyel.projetovendas.services.impl;
 import io.github.brunnodanyel.projetovendas.entities.Cliente;
 import io.github.brunnodanyel.projetovendas.entities.Favorito;
 import io.github.brunnodanyel.projetovendas.entities.Produto;
-import io.github.brunnodanyel.projetovendas.exception.ClienteNaoEncontradoException;
-import io.github.brunnodanyel.projetovendas.exception.ProdutoExistenteFavoritoException;
-import io.github.brunnodanyel.projetovendas.exception.ProdutoNaoEncontradoException;
+import io.github.brunnodanyel.projetovendas.exception.EntidadeExistenteException;
+import io.github.brunnodanyel.projetovendas.exception.EntidadeNaoEncontrada;
 import io.github.brunnodanyel.projetovendas.model.dtoRequest.FavoritoRequestDTO;
 import io.github.brunnodanyel.projetovendas.model.dtoResponse.FavoritoResponseDTO;
 import io.github.brunnodanyel.projetovendas.repositories.ClienteRepository;
@@ -30,9 +29,6 @@ public class FavoritoServiceImpl implements FavoritoService {
     private ClienteService clienteService;
 
     @Autowired
-    private ClienteRepository clienteRepository;
-
-    @Autowired
     private ProdutoRepository produtoRepository;
 
     @Autowired
@@ -50,10 +46,10 @@ public class FavoritoServiceImpl implements FavoritoService {
         }
         String codigoProduto = favoritoRequestDTO.getCodigoProduto();
         Produto produto = produtoRepository.findByCodigoDoProduto(codigoProduto)
-                .orElseThrow(() -> new ProdutoNaoEncontradoException("Produto não encontrado"));
+                .orElseThrow(() -> new EntidadeNaoEncontrada("Produto não encontrado"));
         List<Produto> produtos = favorito.getProdutos();
         if (produtos.contains(produto)) {
-            throw new ProdutoExistenteFavoritoException("Produto já adicionado aos favoritos");
+            throw new EntidadeExistenteException("Produto já adicionado aos favoritos");
         }
 
         produtos.add(produto);

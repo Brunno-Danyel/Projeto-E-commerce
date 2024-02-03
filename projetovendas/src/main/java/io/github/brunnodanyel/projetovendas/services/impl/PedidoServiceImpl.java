@@ -3,11 +3,16 @@ package io.github.brunnodanyel.projetovendas.services.impl;
 import io.github.brunnodanyel.projetovendas.entities.*;
 import io.github.brunnodanyel.projetovendas.enumeration.StatusPedidoEnum;
 import io.github.brunnodanyel.projetovendas.enumeration.TipoEntregaEnum;
-import io.github.brunnodanyel.projetovendas.exception.*;
+import io.github.brunnodanyel.projetovendas.exception.BadRequestExecption;
+import io.github.brunnodanyel.projetovendas.exception.EntidadeNaoEncontrada;
 import io.github.brunnodanyel.projetovendas.model.dtoRequest.ItensPedidoRequestDTO;
 import io.github.brunnodanyel.projetovendas.model.dtoRequest.PedidoRequestDTO;
-import io.github.brunnodanyel.projetovendas.model.dtoResponse.*;
-import io.github.brunnodanyel.projetovendas.repositories.*;
+import io.github.brunnodanyel.projetovendas.model.dtoResponse.PedidoBuscaResponseDTO;
+import io.github.brunnodanyel.projetovendas.model.dtoResponse.PedidoResponseDTO;
+import io.github.brunnodanyel.projetovendas.repositories.EnderecoRepository;
+import io.github.brunnodanyel.projetovendas.repositories.ItemPedidoRepository;
+import io.github.brunnodanyel.projetovendas.repositories.PedidoRepository;
+import io.github.brunnodanyel.projetovendas.repositories.ProdutoRepository;
 import io.github.brunnodanyel.projetovendas.services.ClienteService;
 import io.github.brunnodanyel.projetovendas.services.PedidoService;
 import org.modelmapper.ModelMapper;
@@ -50,7 +55,7 @@ public class PedidoServiceImpl implements PedidoService {
 
         if (pedido.getTipoEntrega().equals(TipoEntregaEnum.ENTREGA)) {
             Endereco endereco = enderecoRepository.findById(pedidoRequestDTO.getIdEnderecoEntrega())
-                    .orElseThrow(() -> new EnderecoNaoEncontradoException("Endereço não encontrado"));
+                    .orElseThrow(() -> new EntidadeNaoEncontrada("Endereço não encontrado"));
             pedido.setEnderecoEntrega(endereco);
         }
 
@@ -58,7 +63,7 @@ public class PedidoServiceImpl implements PedidoService {
         BigDecimal totalPedido = calcularTotalPedido(itensPedidos);
 
         if (itensPedidos.isEmpty()) {
-            throw new PedidoException("Não tem produtos para se realizar pedido, adicione os produtos que deseja");
+            throw new BadRequestExecption("Não tem produtos para se realizar pedido, adicione os produtos que deseja");
         }
         pedido.setTotalPedido(totalPedido);
         pedido.setNumeroPedido(numeroPedido);
@@ -73,14 +78,14 @@ public class PedidoServiceImpl implements PedidoService {
         return itens.stream().map(itemPedidoDto -> {
             String numeroProduto = itemPedidoDto.getNumeroProduto();
             Produto produto = produtoRepository.findByCodigoDoProduto(numeroProduto)
-                    .orElseThrow(() -> new ProdutoNaoEncontradoException("Codigo do produto não encontrado: " + numeroProduto));
+                    .orElseThrow(() -> new EntidadeNaoEncontrada("Codigo do produto não encontrado: " + numeroProduto));
 
             Integer quantidadePedido = itemPedidoDto.getQuantidade();
             Integer quantidadeDisponivel = produto.getQuantidade();
             Integer quantidadeProduto = quantidadeDisponivel - quantidadePedido;
 
             if (produto.getQuantidade() < quantidadePedido) {
-                throw new ProdutoException("Não temos produto suficientes para atender a essa quantidade que deseja!");
+                throw new BadRequestExecption("Não temos produto suficientes para atender a essa quantidade que deseja!");
             }
 
             BigDecimal quantidadeBD = BigDecimal.valueOf(itemPedidoDto.getQuantidade());

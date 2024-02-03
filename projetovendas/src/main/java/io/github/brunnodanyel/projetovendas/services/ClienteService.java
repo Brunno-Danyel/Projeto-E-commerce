@@ -21,7 +21,7 @@ public interface ClienteService {
 
     UserDetails autenticar(Cliente cliente);
 
-     Cliente usuarioAutenticado();
+     Cliente  usuarioAutenticado();
 
 
 }

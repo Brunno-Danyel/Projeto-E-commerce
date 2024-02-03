@@ -13,30 +13,9 @@ import java.util.stream.Collectors;
 @RestControllerAdvice
 public class ControllerException {
 
-    @ExceptionHandler(ClienteNaoEncontradoException.class)
+    @ExceptionHandler(EntidadeNaoEncontrada.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
-    public ApiErrors handleRegraNegocioException(ClienteNaoEncontradoException ex) {
-        String mensagemErro = ex.getMessage();
-        return new ApiErrors(mensagemErro);
-    }
-
-    @ExceptionHandler(EnderecoNaoEncontradoException.class)
-    @ResponseStatus(HttpStatus.NOT_FOUND)
-    public ApiErrors handleRegraNegocioException(EnderecoNaoEncontradoException ex) {
-        String mensagemErro = ex.getMessage();
-        return new ApiErrors(mensagemErro);
-    }
-
-    @ExceptionHandler(CepNaoEncontradoException.class)
-    @ResponseStatus(HttpStatus.NOT_FOUND)
-    public ApiErrors handleRegraNegocioException(CepNaoEncontradoException ex) {
-        String mensagemErro = ex.getMessage();
-        return new ApiErrors(mensagemErro);
-    }
-
-    @ExceptionHandler(ProdutoNaoEncontradoException.class)
-    @ResponseStatus(HttpStatus.NOT_FOUND)
-    public ApiErrors handleRegraNegocioException(ProdutoNaoEncontradoException ex) {
+    public ApiErrors handleRegraNegocioException(EntidadeNaoEncontrada ex) {
         String mensagemErro = ex.getMessage();
         return new ApiErrors(mensagemErro);
     }
@@ -48,30 +27,23 @@ public class ControllerException {
         return new ApiErrors(mensagemErro);
     }
 
-    @ExceptionHandler(ProdutoException.class)
+    @ExceptionHandler(EntidadeExistenteException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ApiErrors handleRegraNegocioException(ProdutoException ex) {
+    public ApiErrors handleRegraNegocioException(EntidadeExistenteException ex) {
         String mensagemErro = ex.getMessage();
         return new ApiErrors(mensagemErro);
     }
 
-    @ExceptionHandler(ProdutoExistenteFavoritoException.class)
+    @ExceptionHandler(BadRequestExecption.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ApiErrors handleRegraNegocioException(ProdutoExistenteFavoritoException ex) {
+    public ApiErrors handleRegraNegocioException(BadRequestExecption ex) {
         String mensagemErro = ex.getMessage();
         return new ApiErrors(mensagemErro);
     }
 
-    @ExceptionHandler(ClienteExistenteException.class)
+    @ExceptionHandler(IdadeException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ApiErrors handleRegraNegocioException(ClienteExistenteException ex) {
-        String mensagemErro = ex.getMessage();
-        return new ApiErrors(mensagemErro);
-    }
-
-    @ExceptionHandler(PedidoException.class)
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ApiErrors handleRegraNegocioException(PedidoException ex) {
+    public ApiErrors handleRegraNegocioException(IdadeException ex) {
         String mensagemErro = ex.getMessage();
         return new ApiErrors(mensagemErro);
     }
