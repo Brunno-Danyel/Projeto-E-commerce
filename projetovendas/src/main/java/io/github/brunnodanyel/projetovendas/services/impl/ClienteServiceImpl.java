@@ -53,9 +53,7 @@ public class ClienteServiceImpl implements UserDetailsService, ClienteService {
 
     @Override
     public void addEnderecoCliente(EnderecoRequestDTO enderecoRequestDTO) {
-        String cpf = retornaCpfClienteAutenticado();
-        Cliente cliente = clienteRepository.findByCpf(cpf)
-                .orElseThrow(() -> new ClienteNaoEncontradoException("Cliente não encontrado"));
+        Cliente cliente = usuarioAutenticado();
         Endereco endereco = converterEnderecoRequest(enderecoRequestDTO);
         if (endereco.getNumero().isEmpty()) {
             endereco.setNumero("S/N");
@@ -90,9 +88,7 @@ public class ClienteServiceImpl implements UserDetailsService, ClienteService {
 
     @Override
     public ClienteResponseDTO atualizarCliente(ClienteUpdateRequestDTO clienteUpdateRequestDTO) {
-        String cpf = retornaCpfClienteAutenticado();
-        return clienteRepository.findByCpf(cpf).map(cliente -> {
-
+            Cliente cliente = usuarioAutenticado();
             String email = clienteUpdateRequestDTO.getEmail().isEmpty() ? cliente.getEmail() : clienteUpdateRequestDTO.getEmail();
             String nomeCompleto = clienteUpdateRequestDTO.getNomeCompleto().isEmpty() ? cliente.getNomeCompleto() : clienteUpdateRequestDTO.getNomeCompleto();
             LocalDate dataNascimento = clienteUpdateRequestDTO.getDataNascimento() == null ? cliente.getDataNascimento() : clienteUpdateRequestDTO.getDataNascimento();
@@ -104,17 +100,15 @@ public class ClienteServiceImpl implements UserDetailsService, ClienteService {
             cliente.setTelefoneCelular(telefoneCelular);
             clienteRepository.save(cliente);
             return retornaCliente(cliente);
-        }).orElseThrow(() -> new ClienteNaoEncontradoException("Cliente " + cpf + " não encontrado"));
     }
 
-    public String retornaCpfClienteAutenticado() {
+    public Cliente usuarioAutenticado() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication == null || !authentication.isAuthenticated()) {
             throw new IllegalStateException("Cliente não autenticado.");
         }
         String email = authentication.getName();
-        Cliente cliente = clienteRepository.findByEmail(email).orElseThrow(() -> new ClienteNaoEncontradoException("Cliente não encontrado"));
-        return cliente.getCpf();
+        return clienteRepository.findByEmail(email).orElseThrow(() -> new ClienteNaoEncontradoException("Cliente não encontrado"));
     }
 
     @Override
@@ -128,8 +122,7 @@ public class ClienteServiceImpl implements UserDetailsService, ClienteService {
     }
 
     private ClienteResponseDTO retornaCliente(Cliente cliente) {
-        ClienteResponseDTO clienteResponseDTO = modelMapper.map(cliente, ClienteResponseDTO.class);
-        return clienteResponseDTO;
+        return modelMapper.map(cliente, ClienteResponseDTO.class);
     }
 
     private void verificarDataCliente(Cliente cliente){

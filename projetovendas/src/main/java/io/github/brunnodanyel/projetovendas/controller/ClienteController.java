@@ -43,20 +43,17 @@ public class ClienteController {
 
     @PutMapping("atualizar/cliente")
     public ClienteResponseDTO atualizarCliente(@RequestBody ClienteUpdateRequestDTO requestDTO) {
-        ClienteResponseDTO clienteResponseDTO = clienteService.atualizarCliente(requestDTO);
-        return clienteResponseDTO;
+        return clienteService.atualizarCliente(requestDTO);
     }
 
     @GetMapping("buscar/id/{id}")
     public ClienteResponseDTO buscarId(@PathVariable Long id) {
-        ClienteResponseDTO clienteResponseDTO = clienteService.buscarId(id);
-        return clienteResponseDTO;
+        return clienteService.buscarId(id);
     }
 
     @GetMapping("buscar/cpf/")
     public ClienteResponseDTO buscarCpf(@RequestParam String cpf) {
-        ClienteResponseDTO clienteResponseDTO = clienteService.buscarCpf(cpf);
-        return clienteResponseDTO;
+        return clienteService.buscarCpf(cpf);
     }
 
     @PostMapping("/auth")
