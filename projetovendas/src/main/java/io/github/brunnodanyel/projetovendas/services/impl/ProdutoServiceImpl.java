@@ -3,8 +3,8 @@ package io.github.brunnodanyel.projetovendas.services.impl;
 import io.github.brunnodanyel.projetovendas.entities.Produto;
 import io.github.brunnodanyel.projetovendas.enumeration.CategoriaEnum;
 import io.github.brunnodanyel.projetovendas.enumeration.DisponibilidadeEnum;
-import io.github.brunnodanyel.projetovendas.exception.ProdutoException;
-import io.github.brunnodanyel.projetovendas.exception.ProdutoNaoEncontradoException;
+import io.github.brunnodanyel.projetovendas.exception.EntidadeExistenteException;
+import io.github.brunnodanyel.projetovendas.exception.EntidadeNaoEncontrada;
 import io.github.brunnodanyel.projetovendas.model.dtoRequest.ProdutoAddRequestDTO;
 import io.github.brunnodanyel.projetovendas.model.dtoRequest.ProdutoRequestDTO;
 import io.github.brunnodanyel.projetovendas.model.dtoRequest.ProdutoUpdateRequestDTO;
@@ -35,7 +35,7 @@ public class ProdutoServiceImpl implements ProdutoService {
     public void cadastrarProduto(ProdutoRequestDTO produtoRequestDTO) {
         Produto produto = converterProdutoRequest(produtoRequestDTO);
         if (produtoRepository.existsByCodigoDoProduto(produto.getCodigoDoProduto())) {
-            throw new ProdutoException("Código de produto existente");
+            throw new EntidadeExistenteException("Código de produto existente");
         }
         produto.setDisponibilidade(produto.getQuantidade() >= QUANTIDADE_MINIMA_PARA_DISPONIBILIDADE ? DisponibilidadeEnum.DISPONIVEL : DisponibilidadeEnum.EM_FALTA);
         produtoRepository.save(produto);
@@ -44,7 +44,7 @@ public class ProdutoServiceImpl implements ProdutoService {
     @Override
     public ProdutoResponseDTO buscarCodigoDoProduto(String cod) {
         return produtoRepository.findByCodigoDoProduto(cod).map(this::retornaProduto)
-                .orElseThrow(() -> new ProdutoNaoEncontradoException("Produto com o código " + cod + " não encontrado"));
+                .orElseThrow(() -> new EntidadeNaoEncontrada("Produto com o código " + cod + " não encontrado"));
     }
 
     @Override
@@ -52,7 +52,7 @@ public class ProdutoServiceImpl implements ProdutoService {
         List<ProdutoResponseDTO> produtoResponseDTOS = produtoRepository.findByMarca(marca).stream()
                 .map(this::retornaProduto).collect(Collectors.toList());
         if(produtoResponseDTOS.isEmpty()){
-            throw new ProdutoNaoEncontradoException("Produto com a marca" + marca + "não foram encontrados");
+            throw new EntidadeNaoEncontrada("Produto com a marca" + marca + "não foram encontrados");
         }
         return produtoResponseDTOS;
     }
@@ -62,7 +62,7 @@ public class ProdutoServiceImpl implements ProdutoService {
         List<ProdutoResponseDTO> produtoResponseDTOS =  produtoRepository.findByNome(nome).stream()
                 .map(this::retornaProduto).collect(Collectors.toList());
         if(produtoResponseDTOS.isEmpty()){
-            throw new ProdutoNaoEncontradoException("Produto " + nome + "não encontrado");
+            throw new EntidadeNaoEncontrada("Produto " + nome + "não encontrado");
         }
         return produtoResponseDTOS;
     }
@@ -72,7 +72,7 @@ public class ProdutoServiceImpl implements ProdutoService {
         List<ProdutoResponseDTO> produtoResponseDTOS = produtoRepository.findByDescricao(descricao).stream()
                 .map(this::retornaProduto).collect(Collectors.toList());
         if(produtoResponseDTOS.isEmpty()){
-            throw new ProdutoNaoEncontradoException("Produto " + descricao + "não encontrado");
+            throw new EntidadeNaoEncontrada("Produto " + descricao + "não encontrado");
         }
         return produtoResponseDTOS;
     }
@@ -82,7 +82,7 @@ public class ProdutoServiceImpl implements ProdutoService {
         List<ProdutoResponseDTO> produtoResponseDTOS = produtoRepository.findByCategoria(categoria).stream()
                 .map(this::retornaProduto).collect(Collectors.toList());
         if(produtoResponseDTOS.isEmpty()){
-            throw new ProdutoNaoEncontradoException("Categoria não encontrada");
+            throw new EntidadeNaoEncontrada("Categoria não encontrada");
         }
         return produtoResponseDTOS;
     }
@@ -92,7 +92,7 @@ public class ProdutoServiceImpl implements ProdutoService {
         List<ProdutoResponseDTO> produtoResponseDTOS = produtoRepository.findByPrecoBetween(precoInicial, precoFinal).stream()
                 .map(this::retornaProduto).collect(Collectors.toList());
         if(produtoResponseDTOS.isEmpty()){
-            throw new ProdutoNaoEncontradoException("Não foram encontrados produtos com esssa faixa de preço");
+            throw new EntidadeNaoEncontrada("Não foram encontrados produtos com esssa faixa de preço");
         }
         return produtoResponseDTOS;
     }
@@ -102,7 +102,7 @@ public class ProdutoServiceImpl implements ProdutoService {
         List<ProdutoResponseDTO> produtoResponseDTOS = produtoRepository.findAll().stream()
                 .map(this::retornaProduto).collect(Collectors.toList());
         if(produtoResponseDTOS.isEmpty()){
-            throw new ProdutoNaoEncontradoException("Não existe produtos cadastrados");
+            throw new EntidadeNaoEncontrada("Não existe produtos cadastrados");
         }
         return produtoResponseDTOS;
     }
@@ -124,7 +124,7 @@ public class ProdutoServiceImpl implements ProdutoService {
             produto.setPreco(preco);
             produtoRepository.save(produto);
             return modelMapper.map(produto, ProdutoResponseAdminDTO.class);
-        }).orElseThrow(() -> new ProdutoNaoEncontradoException("Produto não encontrado!"));
+        }).orElseThrow(() -> new EntidadeNaoEncontrada("Produto não encontrado!"));
     }
 
     @Override
@@ -133,12 +133,11 @@ public class ProdutoServiceImpl implements ProdutoService {
             produto.setQuantidade(produto.getQuantidade() + produtoAddRequestDTO.getQuantidade());
             produtoRepository.save(produto);
             return retornaProduto(produto);
-        }).orElseThrow(() -> new ProdutoNaoEncontradoException("Produto não encontrado!"));
+        }).orElseThrow(() -> new EntidadeNaoEncontrada("Produto não encontrado!"));
     }
 
     private ProdutoResponseDTO retornaProduto(Produto produto) {
-        ProdutoResponseDTO produtoResponseDTO = modelMapper.map(produto, ProdutoResponseDTO.class);
-        return produtoResponseDTO;
+        return modelMapper.map(produto, ProdutoResponseDTO.class);
     }
 
 

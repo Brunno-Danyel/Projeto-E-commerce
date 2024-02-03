@@ -2,9 +2,9 @@ package io.github.brunnodanyel.projetovendas.services.impl;
 
 import io.github.brunnodanyel.projetovendas.entities.Cliente;
 import io.github.brunnodanyel.projetovendas.entities.Endereco;
-import io.github.brunnodanyel.projetovendas.exception.CepNaoEncontradoException;
-import io.github.brunnodanyel.projetovendas.exception.ClienteExistenteException;
-import io.github.brunnodanyel.projetovendas.exception.ClienteNaoEncontradoException;
+import io.github.brunnodanyel.projetovendas.exception.EntidadeExistenteException;
+import io.github.brunnodanyel.projetovendas.exception.EntidadeNaoEncontrada;
+import io.github.brunnodanyel.projetovendas.exception.IdadeException;
 import io.github.brunnodanyel.projetovendas.exception.SenhaIncorretaException;
 import io.github.brunnodanyel.projetovendas.model.dtoRequest.ClienteRequestDTO;
 import io.github.brunnodanyel.projetovendas.model.dtoRequest.ClienteUpdateRequestDTO;
@@ -44,8 +44,8 @@ public class ClienteServiceImpl implements UserDetailsService, ClienteService {
     @Transactional
     public void cadastrarCliente(ClienteRequestDTO clienteRequestDTO) {
         Cliente cliente = converterClienteRequest(clienteRequestDTO);
-        if(clienteRepository.existsByCpf(cliente.getCpf()) || clienteRepository.existsByEmail(cliente.getEmail())){
-            throw new ClienteExistenteException("Já existe um cadastro para o e-mail ou documento informado.");
+        if(clienteRepository.existsByCpfOrEmail(cliente.getCpf(), cliente.getEmail())){
+            throw new EntidadeExistenteException("Já existe um cadastro para o e-mail ou documento informado.");
         }
         verificarDataCliente(cliente);
         clienteRepository.save(cliente);
@@ -65,8 +65,8 @@ public class ClienteServiceImpl implements UserDetailsService, ClienteService {
             Endereco enderecoEncontrado = restTemplate.getForObject(url, Endereco.class);
             endereco.setLocalidade(enderecoEncontrado.getLocalidade());
             endereco.setUf(enderecoEncontrado.getUf());
-        }catch (RuntimeException e){
-            throw new CepNaoEncontradoException("Cep " + endereco.getCep() + " não encontrado");
+        }catch (EntidadeNaoEncontrada e){
+            throw new EntidadeNaoEncontrada("Cep " + endereco.getCep() + " não encontrado");
         }
         endereco.setCliente(cliente);
         cliente.getEnderecos().add(endereco);
@@ -76,14 +76,14 @@ public class ClienteServiceImpl implements UserDetailsService, ClienteService {
     @Override
     public ClienteResponseDTO buscarId(Long clienteId) {
         return clienteRepository.findById(clienteId).map(this::retornaCliente)
-                .orElseThrow(() -> new ClienteNaoEncontradoException("Cliente " + clienteId + " não encontrado"));
+                .orElseThrow(() -> new EntidadeNaoEncontrada("Cliente " + clienteId + " não encontrado"));
 
     }
 
     @Override
     public ClienteResponseDTO buscarCpf(String cpf) {
         return clienteRepository.findByCpf(cpf).map(this::retornaCliente)
-                .orElseThrow(() -> new ClienteNaoEncontradoException("Cliente " + cpf + " não encontrado"));
+                .orElseThrow(() -> new EntidadeNaoEncontrada("Cliente " + cpf + " não encontrado"));
     }
 
     @Override
@@ -108,7 +108,7 @@ public class ClienteServiceImpl implements UserDetailsService, ClienteService {
             throw new IllegalStateException("Cliente não autenticado.");
         }
         String email = authentication.getName();
-        return clienteRepository.findByEmail(email).orElseThrow(() -> new ClienteNaoEncontradoException("Cliente não encontrado"));
+        return clienteRepository.findByEmail(email).orElseThrow(() -> new EntidadeNaoEncontrada("Cliente não encontrado"));
     }
 
     @Override
@@ -130,7 +130,7 @@ public class ClienteServiceImpl implements UserDetailsService, ClienteService {
         LocalDate dataMinima = dataAtual.minusYears(IDADE_MINIMA);
         LocalDate dataNascimento = cliente.getDataNascimento();
         if(dataNascimento.isAfter(dataMinima)){
-            throw new RuntimeException("Cliente dever ter pelo menos 18 anos");
+            throw new IdadeException("Cliente dever ter pelo menos 18 anos");
         }
     }
 
