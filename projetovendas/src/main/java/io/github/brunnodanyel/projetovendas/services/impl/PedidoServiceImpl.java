@@ -27,9 +27,6 @@ public class PedidoServiceImpl implements PedidoService {
     private PedidoRepository pedidoRepository;
 
     @Autowired
-    private ClienteRepository clienteRepository;
-
-    @Autowired
     private ProdutoRepository produtoRepository;
 
     @Autowired
@@ -45,9 +42,7 @@ public class PedidoServiceImpl implements PedidoService {
     private ClienteService clienteService;
 
     public PedidoResponseDTO realizarPedido(PedidoRequestDTO pedidoRequestDTO) {
-        String cpf = clienteService.retornaCpfClienteAutenticado();
-        Cliente cliente = clienteRepository.findByCpf(cpf)
-                .orElseThrow(() -> new ClienteNaoEncontradoException("CPF " + cpf + " não encontrado!"));
+        Cliente cliente = clienteService.usuarioAutenticado();
         Pedido pedido = converterRequest(pedidoRequestDTO);
 
         UUID uuid = UUID.randomUUID();
@@ -99,10 +94,9 @@ public class PedidoServiceImpl implements PedidoService {
     }
 
     public List<PedidoBuscaResponseDTO> buscarPedidoCpf() {
-        String cpf = clienteService.retornaCpfClienteAutenticado();
-        List<PedidoBuscaResponseDTO> listaPedido = pedidoRepository.findByClienteCpf(cpf).stream()
+        Cliente cliente = clienteService.usuarioAutenticado();
+        return pedidoRepository.findByClienteCpf(cliente.getCpf()).stream()
                 .map(pedido -> modelMapper.map(pedido, PedidoBuscaResponseDTO.class)).collect(Collectors.toList());
-        return listaPedido;
     }
 
 
@@ -118,8 +112,7 @@ public class PedidoServiceImpl implements PedidoService {
         return itensPedidos.stream()
                 .map(itemPedido -> {
                     BigDecimal quantidadeBD = BigDecimal.valueOf(itemPedido.getQuantidade());
-                    BigDecimal total = itemPedido.getProduto().getPreco().multiply(quantidadeBD);
-                    return total;
+                    return itemPedido.getProduto().getPreco().multiply(quantidadeBD);
                 })
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
     }
@@ -133,27 +126,6 @@ public class PedidoServiceImpl implements PedidoService {
         return itemPedido;
     }
 
-//    private PedidoResponseDTO retornarPedido(Pedido pedido) {
-//        Cliente cliente = pedido.getCliente();
-//        PedidoClienteResponseDTO clienteResponseDTO = modelMapper.map(cliente, PedidoClienteResponseDTO.class);
-//
-//        List<PedidoItemResponseDTO> pedidoItemResponseDTOS = pedido.getItens().stream().map(itemPedido -> {
-//            PedidoItemResponseDTO pedidoItemResponseDTO = modelMapper.map(itemPedido, PedidoItemResponseDTO.class);
-//            return pedidoItemResponseDTO;
-//        }).collect(Collectors.toList());
-//
-//        Endereco endereco = pedido.getEnderecoEntrega();
-//        EnderecoResponseDTO enderecoResponseDTO = null;
-//        if (endereco != null) {
-//            enderecoResponseDTO = modelMapper.map(endereco, EnderecoResponseDTO.class);
-//        }
-//
-//        PedidoResponseDTO pedidoResponseDTO = modelMapper.map(pedido, PedidoResponseDTO.class);
-//        pedidoResponseDTO.setCliente(clienteResponseDTO);
-//        pedidoResponseDTO.setEnderecoEntrega(enderecoResponseDTO);
-//        pedidoResponseDTO.setItens(pedidoItemResponseDTOS);
-//        return pedidoResponseDTO;
-//    }
 
 
 }

@@ -24,8 +24,7 @@ public class FavoritoController {
 
     @GetMapping
     public List<FavoritoResponseDTO> listarFavoritosCliente(){
-        List<FavoritoResponseDTO> listaFavoritos = favoritoService.listarFavoritosCliente();
-        return listaFavoritos;
+        return favoritoService.listarFavoritosCliente();
     }
 
     @DeleteMapping("remover/{numeroProduto}")

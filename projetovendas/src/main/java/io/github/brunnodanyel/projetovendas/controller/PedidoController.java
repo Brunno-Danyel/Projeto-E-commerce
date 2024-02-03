@@ -21,13 +21,11 @@ public class PedidoController {
     @PostMapping("/realizarPedido")
     @ResponseStatus(HttpStatus.CREATED)
     public PedidoResponseDTO realizarPedido(@RequestBody @Valid PedidoRequestDTO pedidoRequestDTO){
-        PedidoResponseDTO pedido = pedidoService.realizarPedido(pedidoRequestDTO);
-        return pedido;
+        return pedidoService.realizarPedido(pedidoRequestDTO);
     }
 
     @GetMapping("buscar/pedido/cpf")
     public List<PedidoBuscaResponseDTO> buscarPedidoCpf(){
-        List<PedidoBuscaResponseDTO> listaPedido = pedidoService.buscarPedidoCpf();
-        return listaPedido;
+        return pedidoService.buscarPedidoCpf();
     }
 }

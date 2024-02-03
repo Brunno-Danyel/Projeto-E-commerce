@@ -39,9 +39,7 @@ public class FavoritoServiceImpl implements FavoritoService {
     private ModelMapper modelMapper;
 
     public void addProdutoFavorito(FavoritoRequestDTO favoritoRequestDTO){
-        String cpf = clienteService.retornaCpfClienteAutenticado();
-        Cliente cliente = clienteRepository.findByCpf(cpf)
-                .orElseThrow(() -> new ClienteNaoEncontradoException("Cliente não encontrado"));
+        Cliente cliente = clienteService.usuarioAutenticado();
 
         Favorito favorito = cliente.getFavorito();
 
@@ -63,17 +61,13 @@ public class FavoritoServiceImpl implements FavoritoService {
     }
 
     public List<FavoritoResponseDTO> listarFavoritosCliente(){
-        String cpf = clienteService.retornaCpfClienteAutenticado();
-         List<FavoritoResponseDTO> listaFavoritos = favoritoRepository.findByClienteCpf(cpf).stream()
+        Cliente cliente = clienteService.usuarioAutenticado();
+         return favoritoRepository.findByClienteCpf(cliente.getCpf()).stream()
                  .map(favorito -> modelMapper.map(favorito, FavoritoResponseDTO.class)).collect(Collectors.toList());
-        return listaFavoritos;
     }
 
     public void removerFavorito(String numeroProduto){
-        String cpf = clienteService.retornaCpfClienteAutenticado();
-        Cliente cliente = clienteRepository.findByCpf(cpf)
-                .orElseThrow(() -> new ClienteNaoEncontradoException("Cliente não encontrado"));
-
+        Cliente cliente = clienteService.usuarioAutenticado();
         Favorito favorito = cliente.getFavorito();
         List<Produto> produtos = favorito.getProdutos();
         produtos.removeIf(produto -> produto.getCodigoDoProduto().equals(numeroProduto));
