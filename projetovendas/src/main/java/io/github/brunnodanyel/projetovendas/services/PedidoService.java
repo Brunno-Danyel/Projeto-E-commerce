@@ -11,4 +11,6 @@ public interface PedidoService {
     PedidoResponseDTO realizarPedido(PedidoRequestDTO pedidoRequestDTO);
 
     List<PedidoBuscaResponseDTO> buscarPedidoCpf();
+
+    void cancelaPedido(Long id);
 }

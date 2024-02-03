@@ -28,4 +28,10 @@ public class PedidoController {
     public List<PedidoBuscaResponseDTO> buscarPedidoCpf(){
         return pedidoService.buscarPedidoCpf();
     }
+
+    @PutMapping("/cancela/{idPedido}")
+    @ResponseStatus(NO_CONTENT)
+    public void cancelaPedido(Long idPedido) {
+        pedidoService.cancelaPedido(idPedido);
+    }
 }
