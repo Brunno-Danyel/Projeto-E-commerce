@@ -28,57 +28,48 @@ public class ProdutoController {
 
     @GetMapping("/buscar/cod")
     public ProdutoResponseDTO buscarCodigoProduto(@RequestParam String cod) {
-        ProdutoResponseDTO produto = produtoService.buscarCodigoDoProduto(cod);
-        return produto;
+        return produtoService.buscarCodigoDoProduto(cod);
     }
 
     @GetMapping("/buscar/marca")
     public List<ProdutoResponseDTO> buscarMarcaProduto(@RequestParam String marca) {
-        List<ProdutoResponseDTO> listaProduto = produtoService.buscarMarcaProduto(marca);
-        return listaProduto;
+        return produtoService.buscarMarcaProduto(marca);
     }
 
     @GetMapping("/buscar/nome")
     public List<ProdutoResponseDTO> buscarNomeProduto(@RequestParam String nome) {
-        List<ProdutoResponseDTO> listaProduto = produtoService.buscarNomeProduto(nome);
-        return listaProduto;
+        return produtoService.buscarNomeProduto(nome);
     }
 
     @GetMapping("/buscar/descricao")
     public List<ProdutoResponseDTO> buscarDescricaoProduto(@RequestParam String descricao) {
-        List<ProdutoResponseDTO> listaProduto = produtoService.buscarDescricaoProduto(descricao);
-        return listaProduto;
+        return produtoService.buscarDescricaoProduto(descricao);
     }
 
     @GetMapping("/buscar/categoria")
     public List<ProdutoResponseDTO> buscarCategoriaProduto(@RequestParam String categoria) {
-        List<ProdutoResponseDTO> listaProduto = produtoService.buscarCategoriaProduto(categoria);
-        return listaProduto;
+        return produtoService.buscarCategoriaProduto(categoria);
     }
 
     @GetMapping("/buscar/preco")
     public List<ProdutoResponseDTO> buscarPrecoProduto(@RequestParam BigDecimal precoInicial,
                                                        @RequestParam BigDecimal precoFinal) {
-        List<ProdutoResponseDTO> listaProduto = produtoService.buscarPrecoProduto(precoInicial, precoFinal);
-        return listaProduto;
+        return produtoService.buscarPrecoProduto(precoInicial, precoFinal);
     }
 
     @GetMapping("/buscar/todos")
     public List<ProdutoResponseDTO> buscarPrecoProduto() {
-        List<ProdutoResponseDTO> listaProduto = produtoService.listarTodos();
-        return listaProduto;
+        return produtoService.listarTodos();
     }
 
     @PutMapping("/adicionar-produto/{cod}")
     public ProdutoResponseDTO addProduto(@PathVariable String cod, @RequestBody ProdutoAddRequestDTO produtoAddRequestDTO) {
-        ProdutoResponseDTO produtoResponseDTO = produtoService.addProduto(cod, produtoAddRequestDTO);
-        return produtoResponseDTO;
+        return produtoService.addProduto(cod, produtoAddRequestDTO);
     }
 
     @PutMapping("/atualizar/{cod}")
     public ProdutoResponseAdminDTO atualizarProduto(@PathVariable String cod, @RequestBody ProdutoUpdateRequestDTO produtoUpdateRequestDTO) {
-        ProdutoResponseAdminDTO produtoAtualizado = produtoService.atualizarProduto(cod, produtoUpdateRequestDTO);
-        return produtoAtualizado;
+        return produtoService.atualizarProduto(cod, produtoUpdateRequestDTO);
     }
 
 }
