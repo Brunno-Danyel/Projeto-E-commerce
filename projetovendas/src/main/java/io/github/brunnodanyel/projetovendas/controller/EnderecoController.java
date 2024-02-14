@@ -17,7 +17,7 @@ public class EnderecoController {
     @Autowired
     private EnderecoService enderecoService;
 
-    @GetMapping("buscarEndereco/cliente/")
+    @GetMapping("/buscarEndereco/cliente")
     public List<EnderecoResponseDTO> buscarEnderecoCliente() {
         return enderecoService.buscarEnderecoCliente();
     }

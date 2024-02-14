@@ -22,18 +22,15 @@ public class Pedido {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id_pedido")
     private Long id;
 
-    @Column(name = "tb_numero_pedido")
     private String numeroPedido;
 
-    @Column(name = "tb_data_pedido")
     private LocalDate dataDoPedido;
 
-    @Column(name = "tb_status_pedido")
     private StatusPedidoEnum statusPedido;
 
-    @Column(name = "tb_pagamento")
     private PagamentoEnum pagamentoEnum;
 
     @ManyToOne

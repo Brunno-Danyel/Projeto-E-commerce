@@ -18,31 +18,24 @@ public class Produto {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id_produto")
     private Long id;
 
-    @Column(name = "tb_codigo_produto")
     private String codigoDoProduto;
 
-    @Column(name = "tb_nome_produto")
     private String nome;
 
-    @Column(name = "tb_marca")
     private String marca;
 
-    @Column(name = "tb_descricao")
     private String descricao;
 
-    @Column(name = "tb_categoria")
     @Enumerated(EnumType.STRING)
     private CategoriaEnum categoria;
 
-    @Column(name = "tb_preco")
     private BigDecimal preco;
 
-    @Column(name = "tb_quantidade")
     private Integer quantidade;
 
-    @Column(name = "tb_disponibilidade")
     @Enumerated(EnumType.STRING)
     private DisponibilidadeEnum disponibilidade;
 

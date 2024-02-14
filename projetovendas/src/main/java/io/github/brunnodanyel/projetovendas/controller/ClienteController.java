@@ -38,7 +38,7 @@ public class ClienteController {
         clienteService.cadastrarCliente(clienteRequestDTO);
     }
 
-    @PostMapping("/adicionarEndereco/{id}")
+    @PostMapping("/adicionarEndereco")
     public void addEnderecoCliente(@RequestBody @Valid EnderecoRequestDTO enderecoRequestDTO) throws ServicoCepException {
         clienteService.addEnderecoCliente(enderecoRequestDTO);
     }
@@ -54,7 +54,7 @@ public class ClienteController {
         return clienteService.buscarId(id);
     }
 
-    @GetMapping("buscar/cpf/")
+    @GetMapping("buscar/cpf/{cpf}")
     public ClienteResponseDTO buscarCpf(@RequestParam String cpf) {
         return clienteService.buscarCpf(cpf);
     }
