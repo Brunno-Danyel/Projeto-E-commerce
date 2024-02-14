@@ -50,15 +50,28 @@ public class PedidoServiceImpl implements PedidoService {
 
     public PedidoResponseDTO realizarPedido(PedidoRequestDTO pedidoRequestDTO) {
         Cliente cliente = clienteService.usuarioAutenticado();
+        if (!pedidoRequestDTO.isEntrega() && !pedidoRequestDTO.isRetirada()) {
+            throw new BadRequestExecption("É necessário escolher pelo menos uma opção: ENTREGA ou RETIRADA");
+        }
+
+        if(pedidoRequestDTO.isEntrega() && pedidoRequestDTO.isRetirada()){
+            throw new BadRequestExecption("É necessário que escolha apenas uma opção: ENTREGA ou RETIRADA");
+        }
         Pedido pedido = converterRequest(pedidoRequestDTO);
 
         UUID uuid = UUID.randomUUID();
         String numeroPedido = uuid.toString();
 
-        if (pedido.getTipoEntrega().equals(TipoEntregaEnum.ENTREGA)) {
+        if (pedidoRequestDTO.isEntrega()) {
+            if (pedidoRequestDTO.getIdEnderecoEntrega() == null) {
+                throw new BadRequestExecption("É necessário um endereço para a conclusão do pedido");
+            }
             Endereco endereco = enderecoRepository.findById(pedidoRequestDTO.getIdEnderecoEntrega())
                     .orElseThrow(() -> new EntidadeNaoEncontrada("Endereço não encontrado"));
             pedido.setEnderecoEntrega(endereco);
+            pedido.setTipoEntrega(TipoEntregaEnum.ENTREGA);
+        } else {
+            pedido.setTipoEntrega(TipoEntregaEnum.RETIRADA);
         }
 
         List<ItemPedido> itensPedidos = converterItens(pedido, pedidoRequestDTO.getItens());
@@ -121,7 +134,6 @@ public class PedidoServiceImpl implements PedidoService {
         Pedido pedido = new Pedido();
         pedido.setDataDoPedido(LocalDate.now());
         pedido.setStatusPedido(StatusPedidoEnum.EM_PROCESSAMENTO);
-        pedido.setTipoEntrega(pedidoRequestDTO.getTipoEntrega());
         return pedido;
     }
 

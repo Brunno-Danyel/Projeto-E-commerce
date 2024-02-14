@@ -1,5 +1,6 @@
 package io.github.brunnodanyel.projetovendas.services;
 
+import io.github.brunnodanyel.projetovendas.entities.Produto;
 import io.github.brunnodanyel.projetovendas.model.dtoRequest.ProdutoAddRequestDTO;
 import io.github.brunnodanyel.projetovendas.model.dtoRequest.ProdutoRequestDTO;
 import io.github.brunnodanyel.projetovendas.model.dtoRequest.ProdutoUpdateRequestDTO;
@@ -31,4 +32,6 @@ public interface ProdutoService {
     ProdutoResponseAdminDTO atualizarProduto(String cod, ProdutoUpdateRequestDTO produtoUpdateRequestDTO);
 
     ProdutoResponseDTO addProduto(String cod, ProdutoAddRequestDTO produtoAddRequestDTO);
+
+    List<ProdutoResponseDTO> findGeral(Produto produto);
 }
