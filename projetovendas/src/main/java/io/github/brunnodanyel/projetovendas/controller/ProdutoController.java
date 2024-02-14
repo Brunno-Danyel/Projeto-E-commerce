@@ -1,5 +1,6 @@
 package io.github.brunnodanyel.projetovendas.controller;
 
+import io.github.brunnodanyel.projetovendas.entities.Produto;
 import io.github.brunnodanyel.projetovendas.model.dtoRequest.ProdutoAddRequestDTO;
 import io.github.brunnodanyel.projetovendas.model.dtoRequest.ProdutoRequestDTO;
 import io.github.brunnodanyel.projetovendas.model.dtoRequest.ProdutoUpdateRequestDTO;
@@ -61,6 +62,10 @@ public class ProdutoController {
     @GetMapping("/buscar/todos")
     public List<ProdutoResponseDTO> buscarPrecoProduto() {
         return produtoService.listarTodos();
+    }
+
+    public List<ProdutoResponseDTO> findGeral(Produto produto){
+        return produtoService.findGeral(produto);
     }
 
     @PutMapping("/adicionar-produto/{cod}")

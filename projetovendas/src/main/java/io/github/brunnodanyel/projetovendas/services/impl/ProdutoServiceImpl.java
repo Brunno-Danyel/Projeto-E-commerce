@@ -14,6 +14,8 @@ import io.github.brunnodanyel.projetovendas.repositories.ProdutoRepository;
 import io.github.brunnodanyel.projetovendas.services.ProdutoService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Example;
+import org.springframework.data.domain.ExampleMatcher;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -134,6 +136,22 @@ public class ProdutoServiceImpl implements ProdutoService {
             produtoRepository.save(produto);
             return retornaProduto(produto);
         }).orElseThrow(() -> new EntidadeNaoEncontrada("Produto não encontrado!"));
+    }
+
+    public List<ProdutoResponseDTO> findGeral(Produto produto) {
+        ExampleMatcher matcher = ExampleMatcher
+                .matching()
+                .withIgnoreCase()
+                .withStringMatcher(
+                        ExampleMatcher.StringMatcher.CONTAINING);
+
+        Example<Produto> example = Example.of(produto, matcher);
+        List<ProdutoResponseDTO> produtos = produtoRepository.findAll(example).stream()
+                .map(this::retornaProduto).collect(Collectors.toList());
+        if(produtos.isEmpty()){
+            throw new EntidadeNaoEncontrada("Produto não encontrado!");
+        }
+        return produtos;
     }
 
     private ProdutoResponseDTO retornaProduto(Produto produto) {
