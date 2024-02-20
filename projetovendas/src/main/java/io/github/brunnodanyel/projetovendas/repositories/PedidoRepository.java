@@ -7,5 +7,5 @@ import java.util.List;
 
 public interface PedidoRepository extends JpaRepository<Pedido, Long> {
 
-    List<Pedido> findByUsuarioCpf(String cpf);
+    List<Pedido> findByClienteCpf(String cpf);
 }

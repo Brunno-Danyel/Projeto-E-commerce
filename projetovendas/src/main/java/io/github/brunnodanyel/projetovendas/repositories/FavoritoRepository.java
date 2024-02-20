@@ -7,7 +7,7 @@ import java.util.List;
 
 public interface FavoritoRepository extends JpaRepository<Favorito, Long> {
 
-    List<Favorito> findByUsuarioCpf(String cpf);
+    List<Favorito> findByClienteCpf(String cpf);
 
 
 }

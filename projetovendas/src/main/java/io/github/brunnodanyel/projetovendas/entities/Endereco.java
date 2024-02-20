@@ -38,8 +38,8 @@ public class Endereco {
     private String uf;
 
     @ManyToOne
-    @JoinColumn(name = "id_usuario")
-    private Usuario usuario;
+    @JoinColumn(name = "id_cliente")
+    private Cliente cliente;
 
     @OneToMany(mappedBy = "enderecoEntrega", cascade = CascadeType.ALL)
     private List<Pedido> pedidosEntrega;
