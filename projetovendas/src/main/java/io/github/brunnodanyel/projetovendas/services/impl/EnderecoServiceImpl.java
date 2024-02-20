@@ -1,12 +1,12 @@
 package io.github.brunnodanyel.projetovendas.services.impl;
 
-import io.github.brunnodanyel.projetovendas.entities.Cliente;
+import io.github.brunnodanyel.projetovendas.entities.Usuario;
 import io.github.brunnodanyel.projetovendas.entities.Endereco;
 import io.github.brunnodanyel.projetovendas.exception.EntidadeNaoEncontrada;
 import io.github.brunnodanyel.projetovendas.model.dtoRequest.EnderecoRequestDTO;
 import io.github.brunnodanyel.projetovendas.model.dtoResponse.EnderecoResponseDTO;
 import io.github.brunnodanyel.projetovendas.repositories.EnderecoRepository;
-import io.github.brunnodanyel.projetovendas.services.ClienteService;
+import io.github.brunnodanyel.projetovendas.services.UsuarioService;
 import io.github.brunnodanyel.projetovendas.services.EnderecoService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,13 +25,13 @@ public class EnderecoServiceImpl implements EnderecoService {
     private ModelMapper modelMapper;
 
     @Autowired
-    private ClienteService clienteService;
+    private UsuarioService usuarioService;
 
 
     @Override
     public List<EnderecoResponseDTO> buscarEnderecoCliente() {
-        Cliente cliente = clienteService.usuarioAutenticado();
-        List<Endereco> enderecos = enderecoRepository.findByClienteId(cliente.getId())
+        Usuario usuario = usuarioService.usuarioAutenticado();
+        List<Endereco> enderecos = enderecoRepository.findByUsuarioId(usuario.getId())
                 .orElseThrow(() -> new EntidadeNaoEncontrada("Cliente não encontrado"));
         if(enderecos.isEmpty()){
             throw new EntidadeNaoEncontrada("Cliente não possui endereços");
@@ -41,8 +41,8 @@ public class EnderecoServiceImpl implements EnderecoService {
     }
 
     public EnderecoResponseDTO atualizaEnderecoCliente(Long idEndereco, EnderecoRequestDTO enderecoRequestDTO) {
-        Cliente cliente = clienteService.usuarioAutenticado();
-        return enderecoRepository.findByClienteIdAndId(cliente.getId(), idEndereco).map(endereco -> {
+        Usuario usuario = usuarioService.usuarioAutenticado();
+        return enderecoRepository.findByUsuarioIdAndId(usuario.getId(), idEndereco).map(endereco -> {
                     Endereco enderecoAt = enderecoRepository.findById(idEndereco)
                             .orElseThrow(() -> new EntidadeNaoEncontrada("Endereço não encontrado"));
 

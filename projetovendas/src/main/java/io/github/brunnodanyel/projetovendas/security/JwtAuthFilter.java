@@ -1,9 +1,7 @@
 package io.github.brunnodanyel.projetovendas.security;
 
-import io.github.brunnodanyel.projetovendas.services.ClienteService;
-import io.github.brunnodanyel.projetovendas.services.impl.ClienteServiceImpl;
+import io.github.brunnodanyel.projetovendas.services.impl.UsuarioServiceImpl;
 import lombok.AllArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -22,7 +20,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
 
     private JwtService service;
 
-    private ClienteServiceImpl clienteService;
+    private UsuarioServiceImpl clienteService;
 
 
     @Override

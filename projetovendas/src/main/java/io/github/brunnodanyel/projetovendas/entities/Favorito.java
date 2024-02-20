@@ -19,7 +19,7 @@ public class Favorito {
     private Long id;
 
     @OneToOne
-    private Cliente cliente;
+    private Usuario usuario;
 
     @ManyToMany
     @JoinTable(
