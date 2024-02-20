@@ -34,9 +34,6 @@ public class Pedido {
     private PagamentoEnum pagamentoEnum;
 
     @ManyToOne
-    @JoinColumn(name = "usuario_cpf")
-    private Usuario usuario;
-
     @JoinColumn(name = "id_usuario")
     private Usuario usuario;
 
