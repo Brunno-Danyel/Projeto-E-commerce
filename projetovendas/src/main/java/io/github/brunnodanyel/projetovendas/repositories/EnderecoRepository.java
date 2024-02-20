@@ -7,10 +7,10 @@ import java.util.Optional;
 
 public interface EnderecoRepository extends JpaRepository<Endereco, Long> {
 
-    Optional<List<Endereco>> findByClienteCpf(String cpf);
+    Optional<List<Endereco>> findByUsuarioCpf(String cpf);
 
-    Optional<Endereco> findByClienteIdAndId(Long idCliente, Long id);
+    Optional<Endereco> findByUsuarioIdAndId(Long idCliente, Long id);
 
 
-    Optional<List<Endereco>> findByClienteId(Long id);
+    Optional<List<Endereco>> findByUsuarioId(Long id);
 }

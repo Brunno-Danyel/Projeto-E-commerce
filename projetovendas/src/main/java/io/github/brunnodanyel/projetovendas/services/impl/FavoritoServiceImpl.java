@@ -1,16 +1,15 @@
 package io.github.brunnodanyel.projetovendas.services.impl;
 
-import io.github.brunnodanyel.projetovendas.entities.Cliente;
+import io.github.brunnodanyel.projetovendas.entities.Usuario;
 import io.github.brunnodanyel.projetovendas.entities.Favorito;
 import io.github.brunnodanyel.projetovendas.entities.Produto;
 import io.github.brunnodanyel.projetovendas.exception.EntidadeExistenteException;
 import io.github.brunnodanyel.projetovendas.exception.EntidadeNaoEncontrada;
 import io.github.brunnodanyel.projetovendas.model.dtoRequest.FavoritoRequestDTO;
 import io.github.brunnodanyel.projetovendas.model.dtoResponse.FavoritoResponseDTO;
-import io.github.brunnodanyel.projetovendas.repositories.ClienteRepository;
 import io.github.brunnodanyel.projetovendas.repositories.FavoritoRepository;
 import io.github.brunnodanyel.projetovendas.repositories.ProdutoRepository;
-import io.github.brunnodanyel.projetovendas.services.ClienteService;
+import io.github.brunnodanyel.projetovendas.services.UsuarioService;
 import io.github.brunnodanyel.projetovendas.services.FavoritoService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,7 +25,7 @@ public class FavoritoServiceImpl implements FavoritoService {
     private FavoritoRepository favoritoRepository;
 
     @Autowired
-    private ClienteService clienteService;
+    private UsuarioService usuarioService;
 
     @Autowired
     private ProdutoRepository produtoRepository;
@@ -35,14 +34,14 @@ public class FavoritoServiceImpl implements FavoritoService {
     private ModelMapper modelMapper;
 
     public void addProdutoFavorito(FavoritoRequestDTO favoritoRequestDTO){
-        Cliente cliente = clienteService.usuarioAutenticado();
+        Usuario usuario = usuarioService.usuarioAutenticado();
 
-        Favorito favorito = cliente.getFavorito();
+        Favorito favorito = usuario.getFavorito();
 
         if (favorito == null) {
             favorito = new Favorito();
-            favorito.setCliente(cliente);
-            cliente.setFavorito(favorito);
+            favorito.setUsuario(usuario);
+            usuario.setFavorito(favorito);
         }
         String codigoProduto = favoritoRequestDTO.getCodigoProduto();
         Produto produto = produtoRepository.findByCodigoDoProduto(codigoProduto)
@@ -57,14 +56,14 @@ public class FavoritoServiceImpl implements FavoritoService {
     }
 
     public List<FavoritoResponseDTO> listarFavoritosCliente(){
-        Cliente cliente = clienteService.usuarioAutenticado();
-         return favoritoRepository.findByClienteCpf(cliente.getCpf()).stream()
+        Usuario usuario = usuarioService.usuarioAutenticado();
+         return favoritoRepository.findByUsuarioCpf(usuario.getCpf()).stream()
                  .map(favorito -> modelMapper.map(favorito, FavoritoResponseDTO.class)).collect(Collectors.toList());
     }
 
     public void removerFavorito(String numeroProduto){
-        Cliente cliente = clienteService.usuarioAutenticado();
-        Favorito favorito = cliente.getFavorito();
+        Usuario usuario = usuarioService.usuarioAutenticado();
+        Favorito favorito = usuario.getFavorito();
         List<Produto> produtos = favorito.getProdutos();
         produtos.removeIf(produto -> produto.getCodigoDoProduto().equals(numeroProduto));
         favoritoRepository.save(favorito);

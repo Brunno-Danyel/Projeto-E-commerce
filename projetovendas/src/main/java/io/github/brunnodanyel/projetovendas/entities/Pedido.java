@@ -34,8 +34,8 @@ public class Pedido {
     private PagamentoEnum pagamentoEnum;
 
     @ManyToOne
-    @JoinColumn(name = "cliente_tb_cpf")
-    private Cliente cliente;
+    @JoinColumn(name = "usuario_cpf")
+    private Usuario usuario;
 
     @OneToMany(mappedBy = "pedido")
     private List<ItemPedido> itens;
