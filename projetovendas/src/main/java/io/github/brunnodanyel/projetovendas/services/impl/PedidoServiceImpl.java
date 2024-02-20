@@ -13,7 +13,7 @@ import io.github.brunnodanyel.projetovendas.repositories.EnderecoRepository;
 import io.github.brunnodanyel.projetovendas.repositories.ItemPedidoRepository;
 import io.github.brunnodanyel.projetovendas.repositories.PedidoRepository;
 import io.github.brunnodanyel.projetovendas.repositories.ProdutoRepository;
-import io.github.brunnodanyel.projetovendas.services.ClienteService;
+import io.github.brunnodanyel.projetovendas.services.UsuarioService;
 import io.github.brunnodanyel.projetovendas.services.PedidoService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -46,10 +46,10 @@ public class PedidoServiceImpl implements PedidoService {
     private ModelMapper modelMapper;
 
     @Autowired
-    private ClienteService clienteService;
+    private UsuarioService usuarioService;
 
     public PedidoResponseDTO realizarPedido(PedidoRequestDTO pedidoRequestDTO) {
-        Cliente cliente = clienteService.usuarioAutenticado();
+        Usuario usuario = usuarioService.usuarioAutenticado();
         if (!pedidoRequestDTO.isEntrega() && !pedidoRequestDTO.isRetirada()) {
             throw new BadRequestExecption("É necessário escolher pelo menos uma opção: ENTREGA ou RETIRADA");
         }
@@ -82,7 +82,7 @@ public class PedidoServiceImpl implements PedidoService {
         }
         pedido.setTotalPedido(totalPedido);
         pedido.setNumeroPedido(numeroPedido);
-        pedido.setCliente(cliente);
+        pedido.setUsuario(usuario);
         pedidoRepository.save(pedido);
         itemPedidoRepository.saveAll(itensPedidos);
         pedido.setItens(itensPedidos);
@@ -124,8 +124,8 @@ public class PedidoServiceImpl implements PedidoService {
     }
 
     public List<PedidoBuscaResponseDTO> buscarPedidoCpf() {
-        Cliente cliente = clienteService.usuarioAutenticado();
-        return pedidoRepository.findByClienteCpf(cliente.getCpf()).stream()
+        Usuario usuario = usuarioService.usuarioAutenticado();
+        return pedidoRepository.findByUsuarioCpf(usuario.getCpf()).stream()
                 .map(pedido -> modelMapper.map(pedido, PedidoBuscaResponseDTO.class)).collect(Collectors.toList());
     }
 

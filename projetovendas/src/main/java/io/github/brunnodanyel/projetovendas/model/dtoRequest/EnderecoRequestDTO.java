@@ -1,6 +1,6 @@
 package io.github.brunnodanyel.projetovendas.model.dtoRequest;
 
-import io.github.brunnodanyel.projetovendas.entities.Cliente;
+import io.github.brunnodanyel.projetovendas.entities.Usuario;
 import lombok.*;
 
 import javax.validation.constraints.NotEmpty;
@@ -30,5 +30,5 @@ public class EnderecoRequestDTO {
     @NotEmpty(message = "{campo.bairro.obrigatorio}")
     private String bairro;
 
-    private Cliente cliente;
+    private Usuario usuario;
 }

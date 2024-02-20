@@ -1,6 +1,6 @@
 package io.github.brunnodanyel.projetovendas.security;
 
-import io.github.brunnodanyel.projetovendas.entities.Cliente;
+import io.github.brunnodanyel.projetovendas.entities.Usuario;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
@@ -22,7 +22,7 @@ public class JwtService {
     @Value("${security.jwt.chave-assinatura}")
     private String chaveAssinatura;
 
-    public String gerarToken(Cliente cliente) {
+    public String gerarToken(Usuario usuario) {
         long expString = Long.valueOf(expiracao);
         LocalDateTime dataHoraExpiracao = LocalDateTime.now().plusMinutes(expString);
         Instant instant = dataHoraExpiracao.atZone(ZoneId.systemDefault()).toInstant();
@@ -30,7 +30,7 @@ public class JwtService {
 
         return Jwts
                 .builder()
-                .setSubject(cliente.getEmail())
+                .setSubject(usuario.getEmail())
                 .setExpiration(data)
                 .signWith(SignatureAlgorithm.HS512, chaveAssinatura)
                 .compact();
