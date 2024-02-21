@@ -114,6 +114,9 @@ public class PedidoServiceImpl implements PedidoService {
 
             ItemPedido itemPedido = criarItemPedido(pedido, produto, quantidadePedido, totalProduto);
             produto.setQuantidade(quantidadeProduto);
+            if(quantidadeProduto == 0){
+                produto.setDisponibilidade(DisponibilidadeEnum.EM_FALTA);
+            }
             produtoRepository.save(produto);
             return itemPedido;
         }).collect(Collectors.toList());

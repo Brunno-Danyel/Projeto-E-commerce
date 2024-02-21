@@ -133,6 +133,9 @@ public class ProdutoServiceImpl implements ProdutoService {
     public ProdutoResponseDTO addProduto(String cod, ProdutoAddRequestDTO produtoAddRequestDTO) {
         return produtoRepository.findByCodigoDoProduto(cod).map(produto -> {
             produto.setQuantidade(produto.getQuantidade() + produtoAddRequestDTO.getQuantidade());
+            if(produto.getQuantidade() > 0){
+                produto.setDisponibilidade(DisponibilidadeEnum.DISPONIVEL);
+            }
             produtoRepository.save(produto);
             return retornaProduto(produto);
         }).orElseThrow(() -> new EntidadeNaoEncontrada("Produto não encontrado!"));
