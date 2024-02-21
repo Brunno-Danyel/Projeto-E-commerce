@@ -5,11 +5,12 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import io.github.brunnodanyel.projetovendas.enumeration.PagamentoEnum;
 import io.github.brunnodanyel.projetovendas.enumeration.StatusPedidoEnum;
 import io.github.brunnodanyel.projetovendas.enumeration.TipoEntregaEnum;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import javax.persistence.*;
+
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
@@ -25,6 +26,7 @@ public class Pedido {
     @Column(name = "id_pedido")
     private Long id;
 
+    @GeneratedValue(strategy = GenerationType.UUID)
     private String numeroPedido;
 
     private LocalDate dataDoPedido;

@@ -1,10 +1,10 @@
 package io.github.brunnodanyel.projetovendas.entities;
 
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import javax.persistence.*;
 import java.math.BigDecimal;
 
 @Data

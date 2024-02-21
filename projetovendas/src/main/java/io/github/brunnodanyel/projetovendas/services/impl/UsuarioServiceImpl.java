@@ -23,7 +23,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
-import javax.transaction.Transactional;
 import java.time.LocalDate;
 
 @Service
@@ -41,7 +40,6 @@ public class UsuarioServiceImpl implements UserDetailsService, UsuarioService {
 
 
     @Override
-    @Transactional
     public void cadastrarCliente(UsuarioRequestDTO usuarioRequestDTO) {
         Usuario usuario = converterUsuarioRequest(usuarioRequestDTO);
         if(usuarioRepository.existsByCpfOrEmail(usuario.getCpf(), usuario.getEmail())){
@@ -142,6 +140,9 @@ public class UsuarioServiceImpl implements UserDetailsService, UsuarioService {
         usuario.setNomeCompleto(usuarioRequestDTO.getNomeCompleto());
         usuario.setTelefoneCelular(usuarioRequestDTO.getTelefoneCelular());
         usuario.setSenha(usuarioRequestDTO.getSenha());
+        if(usuarioRequestDTO.isAdmin()) {
+            usuario.setAdmin(true);
+        }
         return usuario;
     }
 
@@ -159,7 +160,8 @@ public class UsuarioServiceImpl implements UserDetailsService, UsuarioService {
 
     @Override
     public UserDetails loadUserByUsername(String email) {
-        Usuario usuario = usuarioRepository.findByEmail(email).orElseThrow(() -> new RuntimeException(""));
+        Usuario usuario = usuarioRepository.findByEmail(email)
+                .orElseThrow(() -> new EntidadeNaoEncontrada("Usuário não encontrado"));
 
         String[] roles = usuario.isAdmin() ? new String[]{"ADMIN", "USER"} : new String[]{"USER"};
 

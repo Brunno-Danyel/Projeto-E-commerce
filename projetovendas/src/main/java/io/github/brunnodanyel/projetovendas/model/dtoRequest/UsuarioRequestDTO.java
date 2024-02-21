@@ -2,13 +2,13 @@ package io.github.brunnodanyel.projetovendas.model.dtoRequest;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import io.github.brunnodanyel.projetovendas.validation.anotacao.ValidPassword;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.validator.constraints.br.CPF;
 
-import javax.validation.constraints.Email;
-import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
 
 @Getter
@@ -37,5 +37,6 @@ public class UsuarioRequestDTO {
     @ValidPassword
     private String senha;
 
+    private boolean admin;
 
 }

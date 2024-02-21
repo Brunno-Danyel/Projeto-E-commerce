@@ -2,9 +2,10 @@ package io.github.brunnodanyel.projetovendas.validation;
 
 import io.github.brunnodanyel.projetovendas.exception.SenhaInvalidaException;
 import io.github.brunnodanyel.projetovendas.validation.anotacao.ValidPassword;
+import jakarta.validation.ConstraintValidator;
+import jakarta.validation.ConstraintValidatorContext;
 
-import javax.validation.ConstraintValidator;
-import javax.validation.ConstraintValidatorContext;
+
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
