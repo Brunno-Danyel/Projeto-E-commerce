@@ -11,12 +11,15 @@ import io.github.brunnodanyel.projetovendas.model.dtoResponse.UsuarioResponseDTO
 import io.github.brunnodanyel.projetovendas.model.dtoResponse.TokenResponseDTO;
 import io.github.brunnodanyel.projetovendas.security.JwtService;
 import io.github.brunnodanyel.projetovendas.services.UsuarioService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
-import javax.validation.Valid;
+
+import static io.github.brunnodanyel.projetovendas.security.SecurityConfig.*;
 import static org.springframework.http.HttpStatus.*;
 
 @RequiredArgsConstructor
@@ -27,6 +30,7 @@ public class UsuarioController {
     private final PasswordEncoder encoder;
 
     private final UsuarioService usuarioService;
+
 
     private final JwtService jwtService;
 
@@ -39,22 +43,26 @@ public class UsuarioController {
     }
 
     @PostMapping("/adicionarEndereco")
+    @PreAuthorize(USER)
     public void addEnderecoCliente(@RequestBody @Valid EnderecoRequestDTO enderecoRequestDTO) throws ServicoCepException {
         usuarioService.addEnderecoCliente(enderecoRequestDTO);
     }
 
     @PutMapping("atualizar/cliente")
     @ResponseStatus(NO_CONTENT)
+    @PreAuthorize(USER)
     public UsuarioResponseDTO atualizarCliente(@RequestBody UsuarioUpdateRequestDTO requestDTO) {
         return usuarioService.atualizarCliente(requestDTO);
     }
 
     @GetMapping("buscar/id/{id}")
+    @PreAuthorize(ADMIN)
     public UsuarioResponseDTO buscarId(@PathVariable Long id) {
         return usuarioService.buscarId(id);
     }
 
     @GetMapping("buscar/cpf/{cpf}")
+    @PreAuthorize(ADMIN)
     public UsuarioResponseDTO buscarCpf(@RequestParam String cpf) {
         return usuarioService.buscarCpf(cpf);
     }
