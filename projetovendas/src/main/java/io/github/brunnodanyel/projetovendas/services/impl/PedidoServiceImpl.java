@@ -59,9 +59,6 @@ public class PedidoServiceImpl implements PedidoService {
         }
         Pedido pedido = converterRequest(pedidoRequestDTO);
 
-        UUID uuid = UUID.randomUUID();
-        String numeroPedido = uuid.toString();
-
         if (pedidoRequestDTO.isEntrega()) {
             if (pedidoRequestDTO.getIdEnderecoEntrega() == null) {
                 throw new BadRequestExecption("É necessário um endereço para a conclusão do pedido");
@@ -81,7 +78,6 @@ public class PedidoServiceImpl implements PedidoService {
             throw new BadRequestExecption("Não tem produtos para se realizar pedido, adicione os produtos que deseja");
         }
         pedido.setTotalPedido(totalPedido);
-        pedido.setNumeroPedido(numeroPedido);
         pedido.setUsuario(usuario);
         pedidoRepository.save(pedido);
         itemPedidoRepository.saveAll(itensPedidos);

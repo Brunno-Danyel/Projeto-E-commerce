@@ -1,6 +1,10 @@
 package io.github.brunnodanyel.projetovendas.security;
 
 import io.github.brunnodanyel.projetovendas.services.impl.UsuarioServiceImpl;
+import jakarta.servlet.FilterChain;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.AllArgsConstructor;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;

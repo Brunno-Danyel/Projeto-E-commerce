@@ -2,11 +2,11 @@ package io.github.brunnodanyel.projetovendas.entities;
 
 import io.github.brunnodanyel.projetovendas.enumeration.CategoriaEnum;
 import io.github.brunnodanyel.projetovendas.enumeration.DisponibilidadeEnum;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import javax.persistence.*;
 import java.math.BigDecimal;
 import java.util.List;
 
