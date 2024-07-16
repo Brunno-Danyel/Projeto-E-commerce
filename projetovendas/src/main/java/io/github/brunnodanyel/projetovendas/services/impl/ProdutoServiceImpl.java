@@ -113,17 +113,11 @@ public class ProdutoServiceImpl implements ProdutoService {
     public ProdutoResponseAdminDTO atualizarProduto(String cod, ProdutoUpdateRequestDTO produtoUpdateRequestDTO) {
         return produtoRepository.findByCodigoDoProduto(cod).map(produto -> {
 
-            String nome = produtoUpdateRequestDTO.getNome().isEmpty() ? produto.getNome() : produtoUpdateRequestDTO.getNome();
-            String marca = produtoUpdateRequestDTO.getMarca().isEmpty() ? produto.getMarca() : produtoUpdateRequestDTO.getMarca();
-            String descricao = produtoUpdateRequestDTO.getDescricao().isEmpty() ? produto.getDescricao() : produtoUpdateRequestDTO.getDescricao();
-            CategoriaEnum categoria = produtoUpdateRequestDTO.getCategoria() == null ? produto.getCategoria() : produtoUpdateRequestDTO.getCategoria();
-            BigDecimal preco = produtoUpdateRequestDTO.getPreco() == null ? produto.getPreco() : produtoUpdateRequestDTO.getPreco();
-
-            produto.setNome(nome);
-            produto.setMarca(marca);
-            produto.setDescricao(descricao);
-            produto.setCategoria(categoria);
-            produto.setPreco(preco);
+            produto.setNome(produtoUpdateRequestDTO.getNome().isEmpty() ? produto.getNome() : produtoUpdateRequestDTO.getNome());
+            produto.setMarca(produtoUpdateRequestDTO.getMarca().isEmpty() ? produto.getMarca() : produtoUpdateRequestDTO.getMarca());
+            produto.setDescricao(produtoUpdateRequestDTO.getDescricao().isEmpty() ? produto.getDescricao() : produtoUpdateRequestDTO.getDescricao());
+            produto.setCategoria(produtoUpdateRequestDTO.getCategoria() == null ? produto.getCategoria() : produtoUpdateRequestDTO.getCategoria());
+            produto.setPreco(produtoUpdateRequestDTO.getPreco() == null ? produto.getPreco() : produtoUpdateRequestDTO.getPreco());
             produtoRepository.save(produto);
             return modelMapper.map(produto, ProdutoResponseAdminDTO.class);
         }).orElseThrow(() -> new EntidadeNaoEncontrada("Produto não encontrado!"));
