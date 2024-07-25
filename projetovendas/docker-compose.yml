@@ -1,4 +1,4 @@
-version: '3.9'
+version: '3.3'
 
 services:
 
@@ -8,8 +8,8 @@ services:
     ports:
       - "5433:5432"
     environment:
-      POSTGRES_PASSWORD: postgres
-      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: ${BD_USERNAME}
+      POSTGRES_USER: ${BD_PASSWORD}
       POSTGRES_DATABASE: ecommerce
     restart: always
     networks:
@@ -17,7 +17,7 @@ services:
     expose:
       - 5432
 
-  ecommerce-api:
+  ecommecer-api:
     build:
       dockerfile: Dockerfile
     container_name: ecommerce-api
@@ -25,7 +25,7 @@ services:
     ports:
       - "9091:9090"
     environment:
-        - SPRING_PROFILES_ACTIVE=dockerDev
+      SPRING_PROFILES_ACTIVE: dockerDev
     expose:
       - 9090
     networks:
