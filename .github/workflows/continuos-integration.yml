@@ -39,6 +39,7 @@ jobs:
       run: |
         docker tag projetovendas-ecommecer-api ${{secrets.DOCKER_USERNAME}}/projetovendas-ecommecer-api:${{ github.run_id }}
         docker push ${{secrets.DOCKER_USERNAME}}/projetovendas-ecommecer-api:${{ github.run_id }}
+        docker push ${{secrets.DOCKER_USERNAME}}/projetovendas-ecommecer-api:latest
 
 
 
