@@ -28,11 +28,11 @@ jobs:
         cache: maven
         
     - name: Build Application Jar
-      working-directory: ./Projeto-E-commerce/projetovendas
+      working-directory: ./projetovendas
       run: mvn clean package 
 
     - name: Docker Compose Build
-      working-directory: ./Projeto-E-commerce/projetovendas
+      working-directory: ./projetovendas
       run: docker compose build
 
     - name: Push To Docker Hub
